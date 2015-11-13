@@ -7,11 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MySocket.h"
+
 
 
 @interface ViewController : UIViewController <NSStreamDelegate, UITextFieldDelegate>
 
 
+@property (weak, nonatomic) IBOutlet UIImageView *MyImage;
 
 
 @property (copy, nonatomic) NSInputStream *inputStream;
@@ -28,7 +31,7 @@
 @property int port;
 
 - (IBAction)toMyServer:(id)sender;
-- (void) initNetworkCommunication:(NSString*)ipS: (int)portS;
+- (void) initNetworkCommunicationWithIp:(NSString*)ipS andPort: (int)portS;
 - (void) sendMessages;
 - (void) messageReceived:(NSString*) message;
 
