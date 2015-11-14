@@ -95,12 +95,12 @@
     MySocket *Socket = [[MySocket alloc] initWithIp:[_ip cStringUsingEncoding:[NSString defaultCStringEncoding]] andPort:_port];
     
     [Socket Conection];
-    unsigned char* buf=[Socket Recv];
-    
-    UIImage *img = [self imageFromTexturePixels:buf width:480 height:235];
-    
-    [MyImage setImage:img];
-    
+    //for(;;)
+    {
+        unsigned char* buf=[Socket Recv];
+        UIImage *img = [self imageFromTexturePixels:buf width:1920/*Socket.width*/ height:940/*Socket.height*/];
+        [MyImage setImage:img];
+    }
     
     
     ///  отправка сообщения на сервер
@@ -136,7 +136,7 @@
    // метод для отображения полученного сообщения
 - (void) messageReceived:(NSString *)message {
     [self.messages addObject:message];
-    self.label.text = message;
+
 }
 
 
@@ -151,45 +151,8 @@
         case NSStreamEventOpenCompleted:
             NSLog(@"Stream opened");
             break;
-        /*case NSStreamEventHasBytesAvailable:
-            
-            if (theStream == _inputStream) {
-                
-                unsigned char *buffer;
-                long len;
-                uint8_t tmp;
-                long sz;
-                
-                [_inputStream read:sz maxLength:sizeof(sz)];
-                //sz = atol(tmp);
-                       NSLog(@"%ld",sz);
-                buffer = (unsigned char*) malloc(sz*sizeof(unsigned char));//[[unsigned char alloc][sz];
-                
-                while ([_inputStream hasBytesAvailable])
-                {
-                    len = [_inputStream read:buffer maxLength:sizeof(buffer)];
-                    if (len > 0)
-                    {
-                        
-                        
-                        
-                        
-                        
-                        unsigned char* output = (unsigned char*)buffer;// length:len encoding:NSASCIIStringEncoding];
-                        UIImage *img = [self imageFromArray:output width:480 height:235];
-                        
-                        if (nil != output) {
-                        
-                            NSLog(@"server said: %@", output);
-                            [self messageReceived:output];
-                        }
-                        
-                        
-                    }
-                }
-                NSLog(@"%ld",len);
-            }
-            break;*/
+        case NSStreamEventHasBytesAvailable:
+            break;
             
 
         case NSStreamEventErrorOccurred:

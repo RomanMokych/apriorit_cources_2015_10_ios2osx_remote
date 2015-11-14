@@ -34,5 +34,5 @@ public:
     ~MySocket();
     void Listening();
     void Conection();
-    void Send(unsigned char*, long);
+    void Send(unsigned char*, long,int*);
 };

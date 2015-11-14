@@ -14,6 +14,8 @@
 @synthesize  server_addr=_server_addr;
 @synthesize server_storage=_server_storage;
 @synthesize addr_size=_addr_size;
+@synthesize width = _width;
+@synthesize height = _height;
 
 -(id)initWithIp:(const char*)ip andPort:(int)port
 {
@@ -56,32 +58,36 @@
     
 }
 
--( char*)Recv
+-(unsigned char*)Recv
 {
-    long size;
-    recv(_welcome_socket, &size, sizeof(size), 0);
-    
+    long size = 0;
     int iResult;
     long tmp;
-    long receiveBuffer = 0;
-    long desireRecBuffer = 512;//size;
-    unsigned char *buffer = (char*)malloc(size*sizeof(*buffer));
-    //unsigned char buffer[size];
     
-    
-    
+    long chunk_count;
+    long last_chunk_size;
+    long file_off_set;
     
     int DEFAULT_BUFLEN=512;
     
+    //int rect[4];
+    recv(_welcome_socket, &size, sizeof(size), 0);
+    unsigned char *buffer = (unsigned char*)malloc(size*sizeof(*buffer));
     
-    long chunk_count = size/ DEFAULT_BUFLEN;
-    long last_chunk_size = size-(chunk_count*DEFAULT_BUFLEN);
-    long file_off_set = 0;
+    recv(_welcome_socket, &tmp, 4, 0);
+    //recv(_welcome_socket, rect, sizeof(rect)*4, 0);
+    
+    //_width = rect[2] - rect[0];
+    //_height = rect[3] - rect[1];
+    
+    
+    chunk_count = size/ DEFAULT_BUFLEN;
+    last_chunk_size = size-(chunk_count*DEFAULT_BUFLEN);
+    file_off_set = 0;
     recv(_welcome_socket, &tmp, 4, 0);
     while (chunk_count>0)
     {
         iResult = recv(_welcome_socket, (unsigned char*)(buffer + (file_off_set*DEFAULT_BUFLEN)), DEFAULT_BUFLEN, 0);
-        //iResult = read(_welcome_socket, buffer+(file_off_set*DEFAULT_BUFLEN), DEFAULT_BUFLEN);
         file_off_set++;
         chunk_count--;
     }
@@ -90,28 +96,12 @@
     
      
      
-     /*
-    recv(_welcome_socket, &tmp, 4, 0);
-    while (desireRecBuffer > 0)
-    {
-        //iResult = recv(_welcome_socket, buffer + receiveBuffer, desireRecBuffer, 0);
-        iResult = read(_welcome_socket, buffer+receiveBuffer, desireRecBuffer);
-        if (iResult < 1)
-            break;
-        else
-        {
-            receiveBuffer += iResult;
-            desireRecBuffer = size - receiveBuffer;
-        }
-    }
-    */
-    
+    /*
     for (int i =0; i<size; i++)
     {
         printf("%d %c\n",i,buffer[i]);
-        //NSLog(@"%d %c\n",i,buffer[i]);
     }
-    
+    */
     return buffer;
 }
 

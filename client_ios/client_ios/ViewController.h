@@ -22,7 +22,7 @@
 @property (copy, nonatomic) NSMutableArray *messages;
 @property (weak, nonatomic) IBOutlet UITextField *textF;
 
-@property (weak, nonatomic) IBOutlet UILabel *label;
+
 
 @property (weak, nonatomic) IBOutlet UITextField *ipField;
 @property (weak, nonatomic) IBOutlet UITextField *portField;

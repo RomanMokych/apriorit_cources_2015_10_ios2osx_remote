@@ -12,9 +12,7 @@ uint64_t last_time = 0;
 
 void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef) =  ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
 {
-    //printf("handleStream called!\n");
     
-    // sem_t *sem = sem_open("/my_sem", O_CREAT);
     sem_t *sem = sem_open("/my_sem", O_CREAT, 0644, 1);
     
     if(displayTime - last_time < 500000000)
@@ -26,16 +24,8 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
     
     
     
-    
-    
-    
     last_time = displayTime;
-    /*
-     kCGDisplayStreamFrameStatusFrameComplete,
-     kCGDisplayStreamFrameStatusFrameIdle,
-     kCGDisplayStreamFrameStatusFrameBlank,
-     kCGDisplayStreamFrameStatusStopped,
-     */
+    
     printf("\tstatus: ");
     switch(status)
     {
@@ -72,10 +62,11 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
     CGImageRef testImage;
     CGDataProviderRef provider;
     CFDataRef imageData;
-    long dataLenght;
+    int dataLenght;
     unsigned char *data;
  
-    
+    for (;;)
+    {
     rects = CGDisplayStreamUpdateGetRects(updateRef, kCGDisplayStreamUpdateDirtyRects, &num_rects);
     
     printf("\trectangles: %zd\n", num_rects);
@@ -104,9 +95,8 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
            uRect.origin.y + uRect.size.height);
     
     
-    //CGImageRef testImage = CGDisplayCreateImageForRect (displayID, uRect );
+        testImage = CGDisplayCreateImageForRect (displayID, uRect );
   
-        testImage = CGDisplayCreateImageForRect (displayID, CGRectMake (0, 0, displayWidth/4, displayHeight/4));
     
         provider = CGImageGetDataProvider(testImage);
         imageData = CGDataProviderCopyData(provider);
@@ -117,14 +107,18 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
         
         CFDataGetBytes(imageData, CFRangeMake(0,dataLenght), data);
     
+        int infoRect[4];
+        infoRect[0]=uRect.origin.x;
+        infoRect[1]=uRect.origin.y;
+        infoRect[2]=uRect.origin.x + uRect.size.width;
+        infoRect[3]=uRect.origin.y + uRect.size.height;
     
-    
-        my_sock->Send(data, dataLenght);
+        my_sock->Send(data, dataLenght, infoRect);
         //delete[] data;
     
     
    // sleep(5000);
-    
+    }
     sem_post(sem);
     
 };

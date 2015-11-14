@@ -19,10 +19,11 @@
 @property struct sockaddr_in server_addr;
 @property struct sockaddr_storage server_storage;
 @property socklen_t addr_size;
+@property int width, height;
 
 -(void)Listening;
 -(void)Conection;
--( char*)Recv;
+-(unsigned char*)Recv;
 -(id)initWithIp:(const char*)ip andPort:(int)port;
 
 
