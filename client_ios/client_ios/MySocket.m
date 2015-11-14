@@ -65,7 +65,7 @@
     long tmp;
     long receiveBuffer = 0;
     long desireRecBuffer = 512;//size;
-    char *buffer = (char*)malloc(size*sizeof(*buffer));
+    unsigned char *buffer = (char*)malloc(size*sizeof(*buffer));
     //unsigned char buffer[size];
     
     
@@ -80,7 +80,7 @@
     recv(_welcome_socket, &tmp, 4, 0);
     while (chunk_count>0)
     {
-        iResult = recv(_welcome_socket, buffer + (file_off_set*DEFAULT_BUFLEN), DEFAULT_BUFLEN, 0);
+        iResult = recv(_welcome_socket, (unsigned char*)(buffer + (file_off_set*DEFAULT_BUFLEN)), DEFAULT_BUFLEN, 0);
         //iResult = read(_welcome_socket, buffer+(file_off_set*DEFAULT_BUFLEN), DEFAULT_BUFLEN);
         file_off_set++;
         chunk_count--;
@@ -105,12 +105,13 @@
         }
     }
     */
-    /*
+    
     for (int i =0; i<size; i++)
     {
-        NSLog(@"%d %c\n",i,buffer[i]);
+        printf("%d %c\n",i,buffer[i]);
+        //NSLog(@"%d %c\n",i,buffer[i]);
     }
-    */
+    
     return buffer;
 }
 

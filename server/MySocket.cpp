@@ -70,7 +70,7 @@ void MySocket::Send(unsigned char* mess, long mess_len)
     long file_off_set = 0;
     while (chunk_count>0)
     {
-        send(new_socket, mess+(file_off_set*DEFAULT_BUFLEN), DEFAULT_BUFLEN, 0);
+        send(new_socket, (char*)(mess+(file_off_set*DEFAULT_BUFLEN)), DEFAULT_BUFLEN, 0);
         //write(new_socket,mess+(file_off_set*DEFAULT_BUFLEN), DEFAULT_BUFLEN);
         file_off_set++;
         chunk_count--;

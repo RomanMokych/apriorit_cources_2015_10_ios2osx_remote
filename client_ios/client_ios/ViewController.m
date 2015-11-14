@@ -23,7 +23,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _messages = [[NSMutableArray alloc] init];
+   // _messages = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -32,6 +32,59 @@
 }
 
 
+
+
+-(void) ConvertBetweenBGRAandRGBA:(unsigned char*)input width: (int)pixel_width height:
+                               (int) pixel_height
+{
+    unsigned char tmp;
+    int offset=0;
+    for (int y = 0; y < pixel_height; y++) {
+        for (int x = 0; x < pixel_width; x++) {
+            tmp = input[offset];
+            input[offset] = input[offset+2];
+            input[offset+2]=tmp;
+            offset += 4;
+        }
+    }
+}
+
+
+
+
+-(UIImage *) imageFromTexturePixels:(unsigned char*)rawImageData width:(int)width height:(int)height
+{
+    [self ConvertBetweenBGRAandRGBA:rawImageData width:width height:height];
+    UIImage *newImage = nil;
+    int nrOfColorComponents = 4; //RGBA
+    int bitsPerColorComponent = 8;
+    int rawImageDataLength = width * height * nrOfColorComponents;
+    BOOL interpolateAndSmoothPixels = NO;
+    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Big | kCGImageAlphaPremultipliedLast;//kCGBitmapByteOrderDefault;
+    CGColorRenderingIntent renderingIntent = kCGRenderingIntentDefault;
+    
+    CGDataProviderRef dataProviderRef;
+    CGColorSpaceRef colorSpaceRef;
+    CGImageRef imageRef;
+    
+    @try
+    {
+        GLubyte *rawImageDataBuffer = rawImageData;
+        
+        dataProviderRef = CGDataProviderCreateWithData(NULL, rawImageDataBuffer, rawImageDataLength, nil);
+        colorSpaceRef = CGColorSpaceCreateDeviceRGB();
+        imageRef = CGImageCreate(width, height, bitsPerColorComponent, bitsPerColorComponent * nrOfColorComponents, width * nrOfColorComponents, colorSpaceRef, bitmapInfo, dataProviderRef, NULL, interpolateAndSmoothPixels, renderingIntent);
+        newImage = [[UIImage alloc] initWithCGImage:imageRef scale:1.0 orientation:UIImageOrientationUp];
+    }
+    @finally
+    {
+        CGDataProviderRelease(dataProviderRef);
+        CGColorSpaceRelease(colorSpaceRef);
+        CGImageRelease(imageRef);
+    }
+    
+    return newImage;
+}
 - (IBAction)toMyServer:(id)sender {
     self.ipField.text = @"127.0.0.1";
     self.portField.text = @"7891";
@@ -42,9 +95,9 @@
     MySocket *Socket = [[MySocket alloc] initWithIp:[_ip cStringUsingEncoding:[NSString defaultCStringEncoding]] andPort:_port];
     
     [Socket Conection];
-     char* buf=[Socket Recv];
+    unsigned char* buf=[Socket Recv];
     
-    UIImage *img = [self imageFromArray:buf width:480 height:235];
+    UIImage *img = [self imageFromTexturePixels:buf width:480 height:235];
     
     [MyImage setImage:img];
     
@@ -80,40 +133,15 @@
 }
  
 
-    // метод для отображения полученного сообщения
+   // метод для отображения полученного сообщения
 - (void) messageReceived:(NSString *)message {
     [self.messages addObject:message];
     self.label.text = message;
 }
- 
-
--(UIImage *)imageFromArray:(unsigned char*)array width:(NSUInteger)width height:(NSUInteger)height {
-    
-    
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    if (colorSpace == NULL)
-    {
-        NSLog(@"Error 2");
-    }
-    NSData *data = [[NSData alloc] initWithBytes:array length:sizeof(array)];
-    Byte* bytes = (Byte*)data.bytes;
-    CGContextRef context = CGBitmapContextCreate(bytes, width, height, 8, 4*width, colorSpace, (CGBitmapInfo)/*kCGImageAlphaPremultipliedFirst);*/kCGImageAlphaPremultipliedLast);
-    
-    CGColorSpaceRelease(colorSpace);
-    if (context == NULL)
-    {
-        NSLog(@"Error3");
-        //return nil;
-    }
-    CGImageRef imageRef = CGBitmapContextCreateImage(context);
-    
-    return [UIImage imageWithCGImage:imageRef];
-}
 
 
 
-
-      // делегат для потока получения сообщений с сервера
+     // делегат для потока получения сообщений с сервера
 - (void)stream:(NSStream *)theStream handleEvent:(NSStreamEvent)streamEvent {
     
     NSLog(@"stream event %lu", (unsigned long)streamEvent);
@@ -163,7 +191,7 @@
             }
             break;*/
             
-            
+
         case NSStreamEventErrorOccurred:
             
             NSLog(@"Can not connect to the host!");
