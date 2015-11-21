@@ -12,6 +12,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
+#import "MyImage.h"
 
 @interface MySocket : NSObject
 
@@ -23,7 +24,7 @@
 
 -(void)Listening;
 -(void)Conection;
--(unsigned char*)Recv;
+-(void)Recv:(MyImage*)img;
 -(id)initWithIp:(const char*)ip andPort:(int)port;
 
 

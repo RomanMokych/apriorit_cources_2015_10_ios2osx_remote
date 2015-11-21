@@ -7,13 +7,13 @@
 //
 
 #include "MyScreenStream.hpp"
-
+/*
 uint64_t last_time = 0;
 
 void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef) =  ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
 {
     
-    sem_t *sem = sem_open("/my_sem", O_CREAT, 0644, 1);
+    sem_t *sem = sem_open("/my_sem", O_CREAT, 0, 1);
     
     if(displayTime - last_time < 500000000)
         return;
@@ -62,10 +62,10 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
     CGImageRef testImage;
     CGDataProviderRef provider;
     CFDataRef imageData;
-    int dataLenght;
+    long dataLenght;
     unsigned char *data;
  
-    for (;;)
+    while (true)
     {
     rects = CGDisplayStreamUpdateGetRects(updateRef, kCGDisplayStreamUpdateDirtyRects, &num_rects);
     
@@ -95,7 +95,7 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
            uRect.origin.y + uRect.size.height);
     
     
-        testImage = CGDisplayCreateImageForRect (displayID, uRect );
+        testImage = CGDisplayCreateImageForRect (displayID, uRect);
   
     
         provider = CGImageGetDataProvider(testImage);
@@ -137,6 +137,8 @@ MyScreenStream::MyScreenStream()
     CGDisplayModeRelease(mode);
     
     stream = CGDisplayStreamCreateWithDispatchQueue(display_id, pixelWidth, pixelHeight, 'BGRA', NULL, q, handleStream);
+    
+    StartScreenStream();
 }
 
 MyScreenStream::~MyScreenStream()
@@ -154,3 +156,4 @@ void MyScreenStream::StopScreenStream()
     
     CGDisplayStreamStop(stream);
 }
+*/

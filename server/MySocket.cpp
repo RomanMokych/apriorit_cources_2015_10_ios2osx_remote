@@ -63,14 +63,14 @@ void MySocket::Conection()
 
 void MySocket::Send(unsigned char* mess, long mess_len, int* rect)
 {
-    send(new_socket, &mess_len, sizeof(mess_len), 0);
-    //send(new_socket, rect, sizeof(rect)*4, 0);
+    send(new_socket, rect, sizeof(int)*4, 0);
+    send(new_socket, &mess_len, sizeof(long), 0);
     std::cout << mess_len;
-    
-    
+
     long chunk_count = mess_len/ DEFAULT_BUFLEN;
     long last_chunk_size = mess_len-(chunk_count*DEFAULT_BUFLEN);
     long file_off_set = 0;
+    
     while (chunk_count>0)
     {
         send(new_socket, (unsigned char*)(mess+(file_off_set*DEFAULT_BUFLEN)), DEFAULT_BUFLEN, 0);

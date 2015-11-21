@@ -8,20 +8,23 @@
 
 #import <UIKit/UIKit.h>
 #import "MySocket.h"
+#import "MyImage.h"
 
 
 
 @interface ViewController : UIViewController <NSStreamDelegate, UITextFieldDelegate>
 
 
-@property (weak, nonatomic) IBOutlet UIImageView *MyImage;
+@property (weak, nonatomic) IBOutlet UIImageView *imageView;
 
 
 @property (copy, nonatomic) NSInputStream *inputStream;
 @property (copy, nonatomic) NSOutputStream *outputStream;
 @property (copy, nonatomic) NSMutableArray *messages;
 @property (weak, nonatomic) IBOutlet UITextField *textF;
-
+@property MyImage* myImage;
+@property NSTimer* timer;
+@property MySocket* Socket;
 
 
 @property (weak, nonatomic) IBOutlet UITextField *ipField;
@@ -34,6 +37,10 @@
 - (void) initNetworkCommunicationWithIp:(NSString*)ipS andPort: (int)portS;
 - (void) sendMessages;
 - (void) messageReceived:(NSString*) message;
+
+
++ (NSTimer *)timerWithTimeInterval:(NSTimeInterval)seconds target:(id)target selector:(SEL)aSelector userInfo:(id)userInfo repeats:(BOOL)repeats;
+
 
 @end
 

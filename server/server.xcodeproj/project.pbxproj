@@ -13,6 +13,8 @@
 		7A562CF81BF298F5006EBD17 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A562CF71BF298F5006EBD17 /* OpenGL.framework */; };
 		7A562CFA1BF298FC006EBD17 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A562CF91BF298FC006EBD17 /* GLUT.framework */; };
 		7A562CFC1BF29922006EBD17 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A562CFB1BF29922006EBD17 /* CoreGraphics.framework */; };
+		84A5CF7E1BFF818200329872 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A5CF7D1BFF818200329872 /* CoreData.framework */; };
+		84A5CF801BFF81DC00329872 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A5CF7F1BFF81DC00329872 /* Foundation.framework */; };
 		84E257971BD65E9D0011C41D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84E257961BD65E9D0011C41D /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +39,8 @@
 		7A562CF71BF298F5006EBD17 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		7A562CF91BF298FC006EBD17 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		7A562CFB1BF29922006EBD17 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		84A5CF7D1BFF818200329872 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		84A5CF7F1BFF81DC00329872 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		84E257931BD65E9D0011C41D /* server */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = server; sourceTree = BUILT_PRODUCTS_DIR; };
 		84E257961BD65E9D0011C41D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -46,6 +50,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84A5CF801BFF81DC00329872 /* Foundation.framework in Frameworks */,
+				84A5CF7E1BFF818200329872 /* CoreData.framework in Frameworks */,
 				7A562CFC1BF29922006EBD17 /* CoreGraphics.framework in Frameworks */,
 				7A562CFA1BF298FC006EBD17 /* GLUT.framework in Frameworks */,
 				7A562CF81BF298F5006EBD17 /* OpenGL.framework in Frameworks */,
@@ -59,6 +65,8 @@
 		84E2578A1BD65E9D0011C41D = {
 			isa = PBXGroup;
 			children = (
+				84A5CF7F1BFF81DC00329872 /* Foundation.framework */,
+				84A5CF7D1BFF818200329872 /* CoreData.framework */,
 				7A562CFB1BF29922006EBD17 /* CoreGraphics.framework */,
 				7A562CF91BF298FC006EBD17 /* GLUT.framework */,
 				7A562CF71BF298F5006EBD17 /* OpenGL.framework */,
