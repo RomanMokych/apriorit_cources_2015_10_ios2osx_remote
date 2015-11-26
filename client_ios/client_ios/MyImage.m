@@ -22,15 +22,34 @@
 {
     
     
-    long size = (rect[2]-rect[0])*(rect[3]-rect[1])*4;
+    //long size = (rect[2]-rect[0])*(rect[3]-rect[1])*4;
     
     
-    [self ConvertBetweenBGRAandRGBA:mas withWidth:rect[2]-rect[0] andHeight:rect[3]-rect[1]];
-
-    for (int i = (rect[0]+rect[1]*_width)*4; i<size; i++)
+    int LeftUpX = rect[0];
+    int LeftUpY = rect[1];
+    int RightDownX = rect[2];
+    int RightDownY = rect[3] - 1;
+    int i= (LeftUpX+(LeftUpY)*_width)*4;
+    
+    //long size = (rect[2]-rect[0])*(rect[3]-rect[1])*4;
+    
+    int k=0;
+   
+    while (i < (RightDownX + (RightDownY) * _width) *4 )
     {
-        _masImage[i]=mas[i];
+        
+        
+        for (int j=i ; j < i+(rect[2]- rect[0])*4; j++)
+        {
+            _masImage[j]=mas[k];
+            k++;
+        }
+        i += _width*4;
     }
+    
+    
+    
+    
 
     [self imageFromTexturePixels];
     

@@ -11,14 +11,14 @@ MySocket::MySocket()
 {
     /*---- Create the socket. The three arguments are: ----*/
     /* 1) Internet domain 2) Stream socket 3) Default protocol (TCP in this case) */
-    welcomeSocket = socket(PF_INET, SOCK_STREAM, 0);
+    welcomeSocket = socket(AF_INET, SOCK_STREAM, 0);
     
     /*---- Configure settings of the server address struct ----*/
     /* Address family = Internet */
-    serverAddr.sin_family = AF_INET;
+    //serverAddr.sin_family = AF_INET;
     /* Set port number, using htons function to use proper byte order */
     serverAddr.sin_port = htons(7891);
-    serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
     
     /* Set all bits of the padding field to 0 */
     memset(serverAddr.sin_zero, '\0', sizeof(serverAddr.sin_zero));
@@ -63,6 +63,7 @@ void MySocket::Conection()
 
 void MySocket::Send(unsigned char* mess, long mess_len, int* rect)
 {
+    printf("%d %d %d %d\n", rect[0], rect[1], rect[2], rect[3]);
     send(new_socket, rect, sizeof(int)*4, 0);
     send(new_socket, &mess_len, sizeof(long), 0);
     std::cout << mess_len;
@@ -78,6 +79,11 @@ void MySocket::Send(unsigned char* mess, long mess_len, int* rect)
         chunk_count--;
     }
     send(new_socket, mess+(file_off_set*DEFAULT_BUFLEN), last_chunk_size, 0);
+    /*for (int i =0; i<mess_len; i++)
+    {
+        printf("%d %c\n",i,mess[i]);
+    }*/
+
 }
 
 

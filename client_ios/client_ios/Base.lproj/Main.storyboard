@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
+        <deployment identifier="iOS"/>
         <development version="6300" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -17,14 +18,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g5O-hY-ywS">
-                                <rect key="frame" x="227" y="135" width="134" height="30"/>
-                                <animations/>
-                                <state key="normal" title="Connect"/>
-                                <connections>
-                                    <action selector="toMyServer:" destination="BYZ-38-t0r" eventType="touchUpInside" id="NQp-rl-acj"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="PORT7891" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jfp-Ex-VxX">
                                 <rect key="frame" x="52" y="74" width="69" height="24"/>
                                 <animations/>
@@ -57,24 +50,61 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="7P5-8A-F82"/>
                                 </connections>
                             </textField>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gks-bP-zPn" userLabel="ImageView">
-                                <rect key="frame" x="20" y="185" width="960" height="470"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g5O-hY-ywS">
+                                <rect key="frame" x="376" y="28" width="134" height="30"/>
                                 <animations/>
-                            </imageView>
+                                <state key="normal" title="Connect"/>
+                                <connections>
+                                    <action selector="toMyServer:" destination="BYZ-38-t0r" eventType="touchDown" id="uNA-VO-HS2"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
-                        <outlet property="imageView" destination="Gks-bP-zPn" id="h4b-tc-OX0"/>
                         <outlet property="ipField" destination="aTn-tO-IE1" id="xKk-h0-UqH"/>
                         <outlet property="portField" destination="QEL-ep-jBY" id="F7O-9c-2kB"/>
                         <outlet property="textF" destination="aTn-tO-IE1" id="0hl-ma-yyx"/>
+                        <segue destination="pbA-f4-Q23" kind="showDetail" identifier="showVideoController" animates="NO" id="xNP-YA-vnU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="107.03125" y="277.1484375"/>
+            <point key="canvasLocation" x="119" y="111"/>
+        </scene>
+        <!--Video View Controller-->
+        <scene sceneID="AKe-VC-Ewu">
+            <objects>
+                <viewController id="pbA-f4-Q23" customClass="VideoViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="75i-LE-OhC"/>
+                        <viewControllerLayoutGuide type="bottom" id="w4c-yy-DN6"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="EoU-U5-BCg">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gks-bP-zPn" userLabel="ImageView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="297"/>
+                                <animations/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Gks-bP-zPn" firstAttribute="top" secondItem="EoU-U5-BCg" secondAttribute="top" id="70d-sQ-41y"/>
+                            <constraint firstItem="w4c-yy-DN6" firstAttribute="top" secondItem="Gks-bP-zPn" secondAttribute="bottom" id="Fwn-Nh-0z0"/>
+                            <constraint firstItem="Gks-bP-zPn" firstAttribute="leading" secondItem="EoU-U5-BCg" secondAttribute="leading" id="pgK-su-oWh"/>
+                            <constraint firstAttribute="trailing" secondItem="Gks-bP-zPn" secondAttribute="trailing" id="yKt-Gl-aAz"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="Gks-bP-zPn" id="Ojb-Vd-xpJ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="F7C-0U-gzi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="779" y="111"/>
         </scene>
     </scenes>
 </document>

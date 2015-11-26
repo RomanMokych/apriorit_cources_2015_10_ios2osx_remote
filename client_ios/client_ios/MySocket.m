@@ -21,11 +21,11 @@
 {
     if (self=[super init])
     {
-        _welcome_socket = socket(PF_INET, SOCK_STREAM, 0);
+        _welcome_socket = socket(AF_INET, SOCK_STREAM, 0);
         
         /*---- Configure settings of the server address struct ----*/
         /* Address family = Internet */
-        _server_addr.sin_family = AF_INET;
+        //_server_addr.sin_family = AF_INET;
         /* Set port number, using htons function to use proper byte order */
         _server_addr.sin_port = htons(port);
         /* Set IP address to localhost */
@@ -62,45 +62,51 @@
 {
     long tmpSize;
     
-    long result=0;
+    //long result=0;
     
     int *rect = (int*)malloc(sizeof(int)*4);
     int tmp;
     recv(_welcome_socket, rect, sizeof(int)*4, 0);
     
     
+    
     recv(_welcome_socket, &tmpSize, sizeof(long), 0);
     
+    //usleep(1000000);
     
-    
-    recv(_welcome_socket, &tmp, 4, 0);
+    //recv(_welcome_socket, &tmp, 4, 0);
     unsigned char *buffer = (unsigned char*)malloc(tmpSize);
-
-    long DEFAULT_BUFLEN=512;
+    
+    long DEFAULT_BUFLEN=2;
     long chunk_count = tmpSize/ DEFAULT_BUFLEN;
     long last_chunk_size = tmpSize-(chunk_count*DEFAULT_BUFLEN);
     long file_off_set = 0;
     
-    
+    //sleep(100);
     while (chunk_count>0)
     {
-        recv(_welcome_socket, (unsigned char*)(buffer+(file_off_set*DEFAULT_BUFLEN)), DEFAULT_BUFLEN, 0);
-        file_off_set++;
-        chunk_count--;
+        //sleep(1);
+        if(recv(_welcome_socket, (unsigned char*)(buffer+(file_off_set*DEFAULT_BUFLEN)), DEFAULT_BUFLEN, 0))
+        {
+            file_off_set++;
+            chunk_count--;
+        }
+        
     }
-    send(_welcome_socket, buffer+(file_off_set*DEFAULT_BUFLEN), last_chunk_size, 0);
+    recv(_welcome_socket, buffer+(file_off_set*DEFAULT_BUFLEN), last_chunk_size, 0);
+    //recv(_welcome_socket, &tmp, 4, 0);
     
     for (int i=0; i<4; i++) {
         printf("rect[%d] %d\n", i,rect[i]);
     }
-    
-    for (int i =0; i<result; i++)
-    {
-        printf("%d %c\n",i,buffer[i]);
-    }
+    /*
+     for (int i =0; i<tmpSize; i++)
+     {
+     printf("%d %c\n",i,buffer[i]);
+     }*/
     
     [img setMasImage:buffer withRect:rect];
-    
+    free(buffer);
     
     
     

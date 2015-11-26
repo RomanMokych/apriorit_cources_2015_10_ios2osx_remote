@@ -8,22 +8,14 @@
 
 #import "ViewController.h"
 
-@interface ViewController ()
-
-@end
 
 @implementation ViewController
 
 @synthesize inputStream = _inputStream;
 @synthesize outputStream = _outputStream;
 @synthesize messages = _messages;
-@synthesize ip = _ip;
-@synthesize port = _port;
-@synthesize imageView;
-@synthesize myImage = _myImage;
-@synthesize timer = _timer;
-@synthesize Socket = _Socket;
-
+static int _port;
+static NSString *_ip;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // _messages = [[NSMutableArray alloc] init];
@@ -34,117 +26,37 @@
     // Dispose of any resources that can be recreated.
 }
 
++(NSString*)Ip
+{
+    return _ip;
+}
 
++(int)Port
+{
+    return _port;
+}
 
 
 
 
 - (IBAction)toMyServer:(id)sender {
-    self.ipField.text = @"127.0.0.1";
+    self.ipField.text = @"10.0.0.176";//169.254.203.72";//192.168.48.128";//10.0.0.177";
     self.portField.text = @"7891";
-    _ip = self.ipField.text;
-    _port = [self.portField.text intValue];
     
-    
-    _Socket = [[MySocket alloc] initWithIp:[_ip cStringUsingEncoding:[NSString defaultCStringEncoding]] andPort:_port];
-    
-    [_Socket Conection];
-    _myImage = [[MyImage alloc] initWithWidth:1920 andHeigth:940];
-    
-    //[_Socket Recv:_myImage];
- 
-    //imageView.image= _myImage.img;
+    [self performSegueWithIdentifier:@"showVideoController" sender:nil];
+}
 
-    
-    
-    //while(true)
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"showVideoController"])
     {
-   
-        
-        _timer = [NSTimer scheduledTimerWithTimeInterval:0.5f target:self selector:@selector(update) userInfo:nil repeats:YES];
-
+        NSString* ip = [self.ipField text];
+        int port = [self.portField.text intValue];
+        VideoViewController *dest = segue.destinationViewController;
+        dest.ip = ip;
+        dest.port = port;
     }
-    
-    
-    ///  отправка сообщения на сервер
-    /*
-     NSString *response1  = [NSString stringWithFormat:@"MESSAGE FROM CLIENT"];
-     NSData *data1 = [[NSData alloc] initWithData:[response1 dataUsingEncoding:NSASCIIStringEncoding]];
-     [_outputStream write:[data1 bytes] maxLength:[data1 length]];
-     */
 }
-
-
--(void) update{
-    [_Socket Recv:_myImage];
-    [imageView setImage:_myImage.img];
-    //imageView.image = _myImage.img;
-
-}
-
-
-- (void)initNetworkCommunicationWithIp: (NSString*)ipS andPort:(int)portS {
-    CFReadStreamRef readStream;
-    CFWriteStreamRef writeStream;
-    CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef)ipS, portS, &readStream, &writeStream);
-    _inputStream = (__bridge NSInputStream *)readStream;
-    _outputStream = (__bridge NSOutputStream *)writeStream;
-    
-    [_inputStream setDelegate:self];
-    [_outputStream setDelegate:self];
-    
-    [_inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    [_outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    
-    [_inputStream open];
-    [_outputStream open];
-    
-    
-    
-}
-
-
-// метод для отображения полученного сообщения
-- (void) messageReceived:(NSString *)message {
-    [self.messages addObject:message];
-    
-}
-
-
-
-// делегат для потока получения сообщений с сервера
-- (void)stream:(NSStream *)theStream handleEvent:(NSStreamEvent)streamEvent {
-    
-    NSLog(@"stream event %lu", (unsigned long)streamEvent);
-    
-    switch (streamEvent) {
-            
-        case NSStreamEventOpenCompleted:
-            NSLog(@"Stream opened");
-            break;
-        case NSStreamEventHasBytesAvailable:
-            break;
-            
-            
-        case NSStreamEventErrorOccurred:
-            
-            NSLog(@"Can not connect to the host!");
-            break;
-            
-        case NSStreamEventEndEncountered:
-            
-            [theStream close];
-            [theStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-            //[theStream release];
-            theStream = nil;
-            break;
-        default:
-            NSLog(@"Unknown event");
-    }
-    
-}
-
-
 
 // делегат для скрытия клавиатуры
 

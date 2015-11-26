@@ -9,14 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "MySocket.h"
 #import "MyImage.h"
+#import "VideoViewController.h";
 
 
 
 @interface ViewController : UIViewController <NSStreamDelegate, UITextFieldDelegate>
-
-
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
-
 
 @property (copy, nonatomic) NSInputStream *inputStream;
 @property (copy, nonatomic) NSOutputStream *outputStream;
@@ -27,11 +24,11 @@
 @property MySocket* Socket;
 
 
+//@property (weak, nonatomic) NSString *ip;
+//@property int port;
+
 @property (weak, nonatomic) IBOutlet UITextField *ipField;
 @property (weak, nonatomic) IBOutlet UITextField *portField;
-
-@property (copy, nonatomic) NSString *ip;
-@property int port;
 
 - (IBAction)toMyServer:(id)sender;
 - (void) initNetworkCommunicationWithIp:(NSString*)ipS andPort: (int)portS;

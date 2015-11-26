@@ -21,8 +21,6 @@ MySocket *my_sock = new MySocket();
 void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef) =  ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
 {
     
-    sem_t *sem = sem_open("/my_sem", O_CREAT, 0, 1);
-    
     if(displayTime - last_time < 500000000)
         return;
     
@@ -62,77 +60,74 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
     
     
     CGDirectDisplayID displayID = CGMainDisplayID();
-    CGRect mainMonitor = CGDisplayBounds(displayID);
-    CGFloat displayHeight = CGRectGetHeight(mainMonitor);
-    CGFloat displayWidth = CGRectGetWidth(mainMonitor);
     CGImageRef testImage;
-    CGDataProviderRef provider;
-    CFDataRef imageData;
-    long dataLenght;
-    unsigned char *data;
     
-    while (true)
+    
+    rects = CGDisplayStreamUpdateGetRects(updateRef, kCGDisplayStreamUpdateDirtyRects, &num_rects);
+    
+    printf("\trectangles: %zd\n", num_rects);
+    
+    uRect = *rects;
+    
+    
+    for (size_t i = 0; i < num_rects; i++)
     {
-        rects = CGDisplayStreamUpdateGetRects(updateRef, kCGDisplayStreamUpdateDirtyRects, &num_rects);
+        printf("\t\t(%f,%f),(%f,%f)\n\n",
+               (rects+i)->origin.x,
+               (rects+i)->origin.y,
+               (rects+i)->origin.x + (rects+i)->size.width,
+               
+               (rects+i)->origin.y + (rects+i)->size.height);
         
-        printf("\trectangles: %zd\n", num_rects);
+        uRect = CGRectUnion(uRect, *(rects+i));
         
-        uRect = *rects;
-        
-        
-        for (size_t i = 0; i < num_rects; i++)
-        {
-            printf("\t\t(%f,%f),(%f,%f)\n\n",
-                   (rects+i)->origin.x,
-                   (rects+i)->origin.y,
-                   (rects+i)->origin.x + (rects+i)->size.width,
-                   
-                   (rects+i)->origin.y + (rects+i)->size.height);
-            
-            uRect = CGRectUnion(uRect, *(rects+i));
-            
-        }
-        
-        
-        printf("\t\tUnion: (%f,%f),(%f,%f)\n\n",
-               uRect.origin.x,
-               uRect.origin.y,
-               uRect.origin.x + uRect.size.width,
-               uRect.origin.y + uRect.size.height);
-        
-        
-        testImage = CGDisplayCreateImageForRect (displayID, uRect);
-        
-        
-        provider = CGImageGetDataProvider(testImage);
-        imageData = CGDataProviderCopyData(provider);
-        
-        dataLenght = CFDataGetLength(imageData);
-        
-        data = new  unsigned char[dataLenght];
-        
-        CFDataGetBytes(imageData, CFRangeMake(0,dataLenght), data);
-        
-        int infoRect[4];
-        infoRect[0]=uRect.origin.x;
-        infoRect[1]=uRect.origin.y;
-        infoRect[2]=uRect.origin.x + uRect.size.width;
-        infoRect[3]=uRect.origin.y + uRect.size.height;
-        
-        my_sock->Send(data, dataLenght, infoRect);
-        //delete[] data;
-        
-        
-        //sleep(5000);
     }
-    sem_post(sem);
     
+    
+    printf("\t\tUnion: (%f,%f),(%f,%f)\n\n",
+           uRect.origin.x,
+           uRect.origin.y,
+           uRect.origin.x + uRect.size.width,
+           uRect.origin.y + uRect.size.height);
+    
+    
+    testImage = CGDisplayCreateImageForRect (displayID, uRect);
+    
+    
+    int width = CGImageGetWidth(testImage);
+    int height = CGImageGetHeight(testImage);
+    
+    unsigned char *data = new unsigned char[width * height * sizeof(unsigned char) * 4];//malloc(width * height * sizeof(unsigned char*) * 4);
+    CGContextRef bitmapContext = CGBitmapContextCreate(data,
+                                                       width,
+                                                       height,
+                                                       8,
+                                                       width * 4,
+                                                       CGColorSpaceCreateDeviceRGB(),
+                                                       kCGImageAlphaPremultipliedLast);
+    
+    CGContextDrawImage(bitmapContext,
+                       CGRectMake(0,0,width,height),
+                       testImage);
+    unsigned char *bitmap = new unsigned char[width * height * sizeof(unsigned char*) * 4];
+    bitmap = (unsigned char*)CGBitmapContextGetData(bitmapContext);
+    
+    
+    int infoRect[4];
+    infoRect[0]=uRect.origin.x;
+    infoRect[1]=uRect.origin.y;
+    infoRect[2]=uRect.origin.x + uRect.size.width;
+    infoRect[3]=uRect.origin.y + uRect.size.height;
+    
+    my_sock->Send(bitmap, width * height * sizeof(unsigned char) * 4, infoRect);
+    //delete[] data;
+    
+    
+    //sleep(5000);
 };
 
-
-
 int main(){
-sem_t *sem = sem_open("/my_sem", O_CREAT, 0, 1);
+    
     
     //MySocket *my_sock = new MySocket();
     my_sock->Listening();
@@ -140,9 +135,8 @@ sem_t *sem = sem_open("/my_sem", O_CREAT, 0, 1);
     
     
     
-    dispatch_queue_t q;
-    q = dispatch_queue_create("herp.derp.mcgerp", NULL);
-    
+    dispatch_queue_t camtwist_queue = dispatch_get_current_queue();
+    dispatch_queue_t displayStreamQueue = dispatch_queue_create("MLDESKTOP_QUEUE", DISPATCH_QUEUE_SERIAL);
     CGDisplayStreamRef stream;
     
     CGDirectDisplayID display_id;
@@ -154,22 +148,32 @@ sem_t *sem = sem_open("/my_sem", O_CREAT, 0, 1);
     size_t pixelHeight = CGDisplayModeGetPixelHeight(mode);
     
     CGDisplayModeRelease(mode);
-
-    stream = CGDisplayStreamCreateWithDispatchQueue(display_id, pixelWidth, pixelHeight, 'BGRA', NULL, q, handleStream);
+    stream = CGDisplayStreamCreateWithDispatchQueue(display_id,
+                                                    pixelWidth,
+                                                    pixelHeight,
+                                                    'BGRA',
+                                                    NULL,
+                                                    displayStreamQueue,
+                                                    handleStream);
+    
+    
     
     CGDisplayStreamStart(stream);
     
-    sleep(50000);
+    
+    
+    usleep(50000000000);
     
     CGDisplayStreamStop(stream);
     
-    //sleep(50000);
+    
+    
     printf("Done!\n");
     
     
     //MyScreenStream *MSS = new MyScreenStream();
     //MSS->StartScreenStream();
-    sem_wait(sem);
+    
     //for(;;);
     return 0;
 }
