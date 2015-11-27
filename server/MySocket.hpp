@@ -9,7 +9,7 @@
 #ifndef MySocket_hpp
 #define MySocket_hpp
 
-#define DEFAULT_BUFLEN 512
+#define DEFAULT_BUFLEN 3000
 
 #include <stdio.h>
 #include <sys/socket.h>

@@ -40,7 +40,7 @@ static NSString *_ip;
 
 
 - (IBAction)toMyServer:(id)sender {
-    self.ipField.text = @"10.0.0.176";//169.254.203.72";//192.168.48.128";//10.0.0.177";
+    self.ipField.text = @"127.0.0.1";
     self.portField.text = @"7891";
     
     [self performSegueWithIdentifier:@"showVideoController" sender:nil];

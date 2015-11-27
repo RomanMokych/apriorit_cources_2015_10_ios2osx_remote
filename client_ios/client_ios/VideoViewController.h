@@ -12,11 +12,14 @@
 #import "MyImage.h"
 
 
-@interface VideoViewController : UIViewController
+@interface VideoViewController : UIViewController <NSStreamDelegate>
 
 
 @property (nonatomic, strong) NSString* ip;
 @property int port;
+
+@property (copy, nonatomic) NSInputStream *inputStream;
+@property (copy, nonatomic) NSOutputStream *outputStream;
 
 
 @property MyImage* myImage;
