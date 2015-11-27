@@ -11,37 +11,34 @@
 
 @implementation ViewController
 
-@synthesize inputStream = _inputStream;
-@synthesize outputStream = _outputStream;
-@synthesize messages = _messages;
 static int _port;
 static NSString *_ip;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // _messages = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
-+(NSString*)Ip
+- (IBAction)info:(id)sender
 {
-    return _ip;
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                    message:@"Enter PC IP address which screen you want to display and number of port. By default this number is 7891. "
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
 }
 
-+(int)Port
-{
-    return _port;
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
 }
-
-
-
 
 - (IBAction)toMyServer:(id)sender {
-    self.ipField.text = @"127.0.0.1";
-    self.portField.text = @"7891";
+    self.ipField.text = @"10.0.0.173";
+    //self.portField.text = @"7891";
+    _port = 7891;
     
     [self performSegueWithIdentifier:@"showVideoController" sender:nil];
 }
@@ -51,26 +48,23 @@ static NSString *_ip;
     if ([segue.identifier isEqualToString:@"showVideoController"])
     {
         NSString* ip = [self.ipField text];
-        int port = [self.portField.text intValue];
+        //int port = [self.portField.text intValue];
+        int port = _port;
         VideoViewController *dest = segue.destinationViewController;
         dest.ip = ip;
         dest.port = port;
     }
 }
 
-// делегат для скрытия клавиатуры
-
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if (textField == self.ipField) {
-        
+    if (textField == self.ipField)
+    {
         [textField resignFirstResponder];
-        
     }
-    if (textField == self.portField) {
-        
-        [textField resignFirstResponder];
-        
+    if (textField == self.portField)
+    {
+       [textField resignFirstResponder];
     }
     return YES;
 }

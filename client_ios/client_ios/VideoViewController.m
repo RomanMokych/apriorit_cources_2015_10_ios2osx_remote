@@ -1,11 +1,3 @@
-//
-//  VideoViewController.m
-//  client_ios
-//
-//  Created by Admin on 23.11.15.
-//  Copyright © 2015 Admin. All rights reserved.
-//
-
 #import "VideoViewController.h"
 
 @interface VideoViewController ()
@@ -17,59 +9,89 @@
 
 @synthesize imageView;
 @synthesize myImage = _myImage;
-@synthesize timer = _timer;
 @synthesize Socket = _Socket;
 
 @synthesize ip=_ip;
 @synthesize port=_port;
 
+@synthesize alert = _alert;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self toMyServer];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-
-
-
-
-
-- (void)toMyServer{
     
+    self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGestures:)];
+    self.longPressGestureRecognizer.numberOfTouchesRequired = 1;
+    self.longPressGestureRecognizer.allowableMovement = 100.0f;
+    self.longPressGestureRecognizer.minimumPressDuration = 1.0;
+    
+    [self.view addGestureRecognizer:self.longPressGestureRecognizer];
+    
+    _alert = [[UIAlertView alloc] initWithTitle:@""
+                                       message:@"Choose some action"
+                                      delegate:self
+                             cancelButtonTitle:@"Home"
+                             otherButtonTitles:@"Exit", @"Cancel", nil];
+}
+
+
+
+- (void) handleLongPressGestures:(UILongPressGestureRecognizer *)paramSender
+{
+    if ([paramSender isEqual:self.longPressGestureRecognizer])
+    {
+        if (paramSender.numberOfTouchesRequired == 1)
+        {
+           /* UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                            message:@"Exit?"
+                                                           delegate:self
+                                                  cancelButtonTitle:@"Ok"
+                                                  otherButtonTitles:@"Cancel", nil];*/
+            [_alert show];
+        }
+    }
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0)
+    {
+        
+    }
+    if (buttonIndex == 1)
+    {
+        exit(0);
+    }
+    if (buttonIndex == 2)
+    {
+        [alertView dismissWithClickedButtonIndex:1 animated:NO];
+    }
+    
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+}
+
+- (void)toMyServer
+{
     [self initNetworkCommunicationWithIp:_ip andPort:_port];
     
-    //_Socket = [[MySocket alloc] initWithIp:[_ip cStringUsingEncoding:[NSString defaultCStringEncoding]] andPort:_port];
-     
-     //[_Socket Conection];
-     _myImage = [[MyImage alloc] initWithWidth:1920   andHeigth:940];
-     
-     
-     //_timer = [NSTimer scheduledTimerWithTimeInterval:0.05f target:self selector:@selector(update) userInfo:nil repeats:YES];
-     
-     
-     ///  отправка сообщения на сервер
-     /*
-     NSString *response1  = [NSString stringWithFormat:@"MESSAGE FROM CLIENT"];
-     NSData *data1 = [[NSData alloc] initWithData:[response1 dataUsingEncoding:NSASCIIStringEncoding]];
-     [_outputStream write:[data1 bytes] maxLength:[data1 length]];
-     */
+    _myImage = [[MyImage alloc] initWithWidth:1920   andHeigth:940];
 }
 
 
 -(void) update{
     [_Socket Recv:_myImage];
-    
 }
 
 
-- (void)initNetworkCommunicationWithIp: (NSString*)ipS andPort:(int)portS {
+- (void)initNetworkCommunicationWithIp: (NSString*)ipS andPort:(int)portS
+{
     CFReadStreamRef readStream;
     CFWriteStreamRef writeStream;
     CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef)ipS, portS, &readStream, &writeStream);
+    
     _inputStream = (__bridge NSInputStream *)readStream;
     _outputStream = (__bridge NSOutputStream *)writeStream;
     
@@ -81,33 +103,7 @@
     
     [_inputStream open];
     [_outputStream open];
-    
 }
-
-
-
-
-// делегат для потока получения сообщений с сервера
-
-
-// делегат для скрытия клавиатуры
-/*
- - (BOOL)textFieldShouldReturn:(UITextField *)textField
- {
- if (textField == self.ipField) {
- 
- [textField resignFirstResponder];
- 
- }
- if (textField == self.portField) {
- 
- [textField resignFirstResponder];
- 
- }
- return YES;
- }
- */
-
 
 - (void)stream:(NSStream *)theStream handleEvent:(NSStreamEvent)streamEvent {
     
@@ -133,7 +129,8 @@
                 printf("size  %ld\n", size);
                 
                 unsigned char *buffer = (unsigned char*)malloc(size);
-                long len=0, tmpLen=0;
+                long len=0;
+                long tmpLen=0;
                 while (tmpLen<size)
                 {
                     if((len = [_inputStream read:buffer+tmpLen maxLength:size-tmpLen])!=-1){
@@ -148,7 +145,6 @@
             }
             break;
             
-            
         case NSStreamEventErrorOccurred:
             
             NSLog(@"Can not connect to the host!");
@@ -156,11 +152,11 @@
             
         case NSStreamEventEndEncountered:
             /*
-            [theStream close];
-            [theStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-            printf("END\n");
-            //[theStream release];
-            theStream = nil;
+             [theStream close];
+             [theStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+             printf("END\n");
+             //[theStream release];
+             theStream = nil;
              */
             break;
         default:
@@ -168,6 +164,5 @@
     }
     
 }
-
 
 @end

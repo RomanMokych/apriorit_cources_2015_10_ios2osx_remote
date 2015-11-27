@@ -48,16 +48,16 @@ void MySocket::Conection()
 {
     if (welcomeSocket)
     {
-        int choice;
-        std::cout << "Connect to client?  1.YES/0.NO ->   ";
-        std::cin >> choice;
+        //int choice;
+        //std::cout << "Connect to client?  1.YES/0.NO ->   ";
+        //std::cin >> choice;
         
-        if (choice)
-        {
+        //if (choice)
+        //{
             if (new_socket)
                 printf("We have connection!\n");
             
-        }
+       // }
     }
 }
 

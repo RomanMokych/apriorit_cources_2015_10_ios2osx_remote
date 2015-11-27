@@ -12,7 +12,7 @@
 #import "MyImage.h"
 
 
-@interface VideoViewController : UIViewController <NSStreamDelegate>
+@interface VideoViewController : UIViewController <NSStreamDelegate, UIAlertViewDelegate>
 
 
 @property (nonatomic, strong) NSString* ip;
@@ -23,9 +23,15 @@
 
 
 @property MyImage* myImage;
-@property NSTimer* timer;
+//@property NSTimer* timer;
 @property MySocket* Socket;
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
+
+@property (nonatomic, strong) UILongPressGestureRecognizer *longPressGestureRecognizer;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinchGestureRecognizer;
+
+@property (strong, nonatomic) UIAlertView* alert;
+
 
 @end
