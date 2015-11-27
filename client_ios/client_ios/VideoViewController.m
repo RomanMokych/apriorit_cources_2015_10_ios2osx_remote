@@ -28,10 +28,10 @@
     [self.view addGestureRecognizer:self.longPressGestureRecognizer];
     
     _alert = [[UIAlertView alloc] initWithTitle:@""
-                                       message:@"Choose some action"
-                                      delegate:self
-                             cancelButtonTitle:@"Home"
-                             otherButtonTitles:@"Exit", @"Cancel", nil];
+                                        message:@"Choose some action"
+                                       delegate:self
+                              cancelButtonTitle:@"Home"
+                              otherButtonTitles:@"Exit", @"Cancel", nil];
 }
 
 
@@ -42,11 +42,11 @@
     {
         if (paramSender.numberOfTouchesRequired == 1)
         {
-           /* UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
-                                                            message:@"Exit?"
-                                                           delegate:self
-                                                  cancelButtonTitle:@"Ok"
-                                                  otherButtonTitles:@"Cancel", nil];*/
+            /* UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+             message:@"Exit?"
+             delegate:self
+             cancelButtonTitle:@"Ok"
+             otherButtonTitles:@"Cancel", nil];*/
             [_alert show];
         }
     }
@@ -75,9 +75,11 @@
 
 - (void)toMyServer
 {
+    
+    recvQueue = dispatch_queue_create("RECV_QUEUE", DISPATCH_QUEUE_SERIAL);
     [self initNetworkCommunicationWithIp:_ip andPort:_port];
     
-    _myImage = [[MyImage alloc] initWithWidth:1920   andHeigth:940];
+    _myImage = [[MyImage alloc] initWithWidth:1366   andHeigth:768];
 }
 
 
@@ -105,6 +107,7 @@
     [_outputStream open];
 }
 
+
 - (void)stream:(NSStream *)theStream handleEvent:(NSStreamEvent)streamEvent {
     
     NSLog(@"stream event %lu", (unsigned long)streamEvent);
@@ -118,30 +121,43 @@
             
             if (theStream == _inputStream)
             {
-                int *rect = (int*)malloc(sizeof(int)*4);
-                [_inputStream read:(unsigned char*)rect maxLength:sizeof(int)*4];
-                for (int i =0; i<4; i++)
-                {
-                    printf("rect[%d] %d\n",i,rect[i]);
-                }
-                long size;
-                [_inputStream read:(unsigned char*)&size maxLength:sizeof(long)];
-                printf("size  %ld\n", size);
                 
-                unsigned char *buffer = (unsigned char*)malloc(size);
-                long len=0;
-                long tmpLen=0;
-                while (tmpLen<size)
-                {
-                    if((len = [_inputStream read:buffer+tmpLen maxLength:size-tmpLen])!=-1){
-                        tmpLen+=len;
+                
+                dispatch_async(recvQueue, ^(void){
+                    int *rect = (int*)malloc(sizeof(int)*4);
+                    [_inputStream read:(unsigned char*)rect maxLength:sizeof(int)*4];
+                    for (int i =0; i<4; i++)
+                    {
+                        printf("rect[%d] %d\n",i,rect[i]);
                     }
-                }
-                
-                [_myImage setMasImage:buffer withRect:rect];
-                [imageView setImage:_myImage.img];
-                free(buffer);
-                free(rect);
+                    long size;
+                    [_inputStream read:(unsigned char*)&size maxLength:sizeof(long)];
+                    printf("size  %ld\n", size);
+                    
+                    
+                    //НЕ УДАЛЯТЬ(КОММЕНТИРОВАТЬ), НУЖНО ДЛЯ РАБОТЫ НА КОМПЬЮТЕРЕ ЖЕНИ!
+                    ////////
+                    int k;
+                    [_inputStream read:&k maxLength:4];
+                    ////////
+                    
+                    
+                    unsigned char *buffer = (unsigned char*)malloc(size);
+                    long len=0;
+                    long tmpLen=0;
+                    while (tmpLen<size)
+                    {
+                        if((len = [_inputStream read:buffer+tmpLen maxLength:size-tmpLen])!=-1){
+                            tmpLen+=len;
+                        }
+                    }
+                                        [_myImage setMasImage:buffer withRect:rect];
+                    dispatch_async(dispatch_get_main_queue(), ^(void){
+                        [imageView setImage:_myImage.img];
+                    });
+                    free(buffer);
+                    free(rect);
+                });
             }
             break;
             
@@ -151,13 +167,13 @@
             break;
             
         case NSStreamEventEndEncountered:
-            /*
+            
              [theStream close];
              [theStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
              printf("END\n");
              //[theStream release];
              theStream = nil;
-             */
+             
             break;
         default:
             NSLog(@"Unknown event");

@@ -13,7 +13,7 @@
 
 
 @interface VideoViewController : UIViewController <NSStreamDelegate, UIAlertViewDelegate>
-
+{dispatch_queue_t recvQueue;}
 
 @property (nonatomic, strong) NSString* ip;
 @property int port;
