@@ -65,7 +65,7 @@
                                 </state>
                                 <connections>
                                     <action selector="toMyServer:" destination="BYZ-38-t0r" eventType="touchDown" id="uNA-VO-HS2"/>
-                                    <segue destination="pbA-f4-Q23" kind="show" identifier="showVideoController" id="foW-ZZ-sEh"/>
+                                    <segue destination="pbA-f4-Q23" kind="modal" identifier="showVideoController" id="foW-ZZ-sEh"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fqW-RI-6Ir">
@@ -116,9 +116,11 @@
                     </view>
                     <connections>
                         <outlet property="imageView" destination="Gks-bP-zPn" id="Ojb-Vd-xpJ"/>
+                        <segue destination="oo4-5F-Gig" kind="unwind" identifier="returnToStepOne" unwindAction="returnToStepOne:" id="nB4-BJ-fZM"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="F7C-0U-gzi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="oo4-5F-Gig" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="727" y="111"/>
         </scene>

@@ -32,6 +32,7 @@
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinchGestureRecognizer;
 
 @property (strong, nonatomic) UIAlertView* alert;
+@property (strong, nonatomic) UIAlertView* alertErr;
 
 
 @end

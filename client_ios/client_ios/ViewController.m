@@ -22,6 +22,11 @@ static NSString *_ip;
     [super didReceiveMemoryWarning];
 }
 
+- (IBAction)returnToStepOne:(UIStoryboardSegue *)segue {
+    
+}
+
+
 - (IBAction)info:(id)sender
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
@@ -36,7 +41,7 @@ static NSString *_ip;
 }
 
 - (IBAction)toMyServer:(id)sender {
-    self.ipField.text = @"127.0.0.1";
+    self.ipField.text = @"10.0.0.207";
     //self.portField.text = @"7891";
     _port = 7891;
     

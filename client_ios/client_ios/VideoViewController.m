@@ -15,6 +15,7 @@
 @synthesize port=_port;
 
 @synthesize alert = _alert;
+@synthesize alertErr = _alertErr;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -32,6 +33,12 @@
                                        delegate:self
                               cancelButtonTitle:@"Home"
                               otherButtonTitles:@"Exit", @"Cancel", nil];
+    
+    _alertErr = [[UIAlertView alloc] initWithTitle:@"Error"
+                                        message:@"Can not connect to the host. Try again."
+                                       delegate:self
+                              cancelButtonTitle:@"Ok"
+                              otherButtonTitles:nil];
 }
 
 
@@ -55,7 +62,15 @@
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 0)
     {
+        [_inputStream close];
+        [_inputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        printf("END\n");
         
+        _inputStream = nil;
+        [_outputStream close];
+        [_outputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        _outputStream = nil;
+        [self performSegueWithIdentifier:@"returnToStepOne" sender:self];
     }
     if (buttonIndex == 1)
     {
@@ -79,7 +94,7 @@
     recvQueue = dispatch_queue_create("RECV_QUEUE", DISPATCH_QUEUE_SERIAL);
     [self initNetworkCommunicationWithIp:_ip andPort:_port];
     
-    _myImage = [[MyImage alloc] initWithWidth:1366   andHeigth:768];
+    _myImage = [[MyImage alloc] initWithWidth:1920   andHeigth:940];
 }
 
 
@@ -137,8 +152,8 @@
                     
                     //НЕ УДАЛЯТЬ(КОММЕНТИРОВАТЬ), НУЖНО ДЛЯ РАБОТЫ НА КОМПЬЮТЕРЕ ЖЕНИ!
                     ////////
-                    int k;
-                    [_inputStream read:&k maxLength:4];
+                    /*int k;
+                    [_inputStream read:&k maxLength:4];*/
                     ////////
                     
                     
@@ -164,6 +179,7 @@
         case NSStreamEventErrorOccurred:
             
             NSLog(@"Can not connect to the host!");
+            [_alertErr show];
             break;
             
         case NSStreamEventEndEncountered:
