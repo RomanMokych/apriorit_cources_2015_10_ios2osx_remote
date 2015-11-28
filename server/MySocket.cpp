@@ -42,43 +42,35 @@ void MySocket::Listening()
     /*---- Accept call creates a new socket for the incoming connection ----*/
     addr_size = sizeof serverStorage;
     new_socket = accept(welcomeSocket, (struct sockaddr *) &serverStorage, &addr_size);
+    Conection();
 }
 
 void MySocket::Conection()
 {
     if (welcomeSocket)
     {
-        //int choice;
-        //std::cout << "Connect to client?  1.YES/0.NO ->   ";
-        //std::cin >> choice;
-        
-        //if (choice)
-        //{
-            if (new_socket)
-                printf("We have connection!\n");
-            
-       // }
+        if (new_socket)
+            printf("We have connection!\n");
     }
 }
 
-void MySocket::Send(unsigned char* mess, long mess_len, int* rect)
+int MySocket::Send(unsigned char* mess, long mess_len, int* rect)
 {
-    //printf("%d %d %d %d\n", rect[0], rect[1], rect[2], rect[3]);
-    send(new_socket, rect, sizeof(int)*4, 0);
-    send(new_socket, &mess_len, sizeof(long), 0);
-    //std::cout << mess_len;
-    send(new_socket, (unsigned char*)mess, mess_len,0);
-    /*while (chunk_count>0)
+
+    if (send(new_socket, rect, sizeof(int)*4, 0) == -1)
     {
-        send(new_socket, (unsigned char*)(mess+(file_off_set*DEFAULT_BUFLEN)), DEFAULT_BUFLEN, 0);
-        file_off_set++;
-        chunk_count--;
+        close(welcomeSocket);
+        close(new_socket);
+        return -1;
+        
     }
-    send(new_socket, mess+(file_off_set*DEFAULT_BUFLEN), last_chunk_size, 0);
-    /*for (int i =0; i<mess_len; i++)
-    {
-        printf("%d %c\n",i,mess[i]);
-    }*/
+    else {
+        
+    send(new_socket, &mess_len, sizeof(long), 0);
+
+    send(new_socket, (unsigned char*)mess, mess_len,0);
+    }
+    return 0;
 
 }
 

@@ -15,44 +15,15 @@
 //#include "MyScreenStream.hpp"
 #include "MySocket.hpp"
 
-uint64_t last_time = 0;
-MySocket *my_sock = new MySocket();
-dispatch_queue_t sendQueue = dispatch_queue_create("SEND_QUEUE", DISPATCH_QUEUE_SERIAL);
+MySocket *my_sock;
+CGDisplayStreamRef stream;
 
+
+dispatch_queue_t displayStreamQueue;
+dispatch_queue_t sendQueue;
+dispatch_semaphore_t sem;
 void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef) =  ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
 {
-    /*
-    if(displayTime - last_time < 500000000)
-        return;
-    
-    
-    
-    
-    
-    last_time = displayTime;
-    
-     printf("\tstatus: ");
-     switch(status)
-     {
-     case kCGDisplayStreamFrameStatusFrameComplete:
-     printf("Complete\n");
-     break;
-     
-     case kCGDisplayStreamFrameStatusFrameIdle:
-     printf("Idle\n");
-     break;
-     
-     case kCGDisplayStreamFrameStatusFrameBlank:
-     printf("Blank\n");
-     break;
-     
-     case kCGDisplayStreamFrameStatusStopped:
-     printf("Stopped\n");
-     break;
-     }
-     printf("\ttime: %lld\n", displayTime);
-     
-     */
     CGRect uRect;
     
     const CGRect * rects;
@@ -66,32 +37,14 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
     
     rects = CGDisplayStreamUpdateGetRects(updateRef, kCGDisplayStreamUpdateDirtyRects, &num_rects);
     
-    //printf("\trectangles: %zd\n", num_rects);
     
     uRect = *rects;
+    for (size_t i = 0; i < num_rects; i++)
+    {
+        uRect = CGRectUnion(uRect, *(rects+i));
+        
+    }
     
-    /*
-     for (size_t i = 0; i < num_rects; i++)
-     {
-     printf("\t\t(%f,%f),(%f,%f)\n\n",
-     (rects+i)->origin.x,
-     (rects+i)->origin.y,
-     (rects+i)->origin.x + (rects+i)->size.width,
-     
-     (rects+i)->origin.y + (rects+i)->size.height);
-     
-     uRect = CGRectUnion(uRect, *(rects+i));
-     
-     }
-     
-     
-     printf("\t\tUnion: (%f,%f),(%f,%f)\n\n",
-     uRect.origin.x,
-     uRect.origin.y,
-     uRect.origin.x + uRect.size.width,
-     uRect.origin.y + uRect.size.height);
-     
-     */
     testImage = CGDisplayCreateImageForRect (displayID, uRect);
     
     
@@ -120,30 +73,34 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
         infoRect[2]=uRect.origin.x + uRect.size.width;
         infoRect[3]=uRect.origin.y + uRect.size.height;
         
-        my_sock->Send(bitmap, width * height * sizeof(unsigned char) * 4, infoRect);
+        if (my_sock->Send(bitmap, width * height * sizeof(unsigned char) * 4, infoRect) == -1)
+        {
+            
+            dispatch_sync(dispatch_queue_create("queue", DISPATCH_QUEUE_SERIAL), ^{
+                dispatch_suspend(sendQueue);
+                CGDisplayStreamStop(stream);
+                dispatch_semaphore_signal(sem);
+            });
+        }
     });
 };
 
 int main(){
     
     
-    my_sock->Listening();
-    my_sock->Conection();
     
-    
-    
-    dispatch_queue_t displayStreamQueue = dispatch_queue_create("MLDESKTOP_QUEUE", DISPATCH_QUEUE_SERIAL);
-    CGDisplayStreamRef stream;
-    
-    CGDirectDisplayID display_id;
-    display_id = CGMainDisplayID();
-    
+    CGDirectDisplayID display_id = CGMainDisplayID();
     CGDisplayModeRef mode = CGDisplayCopyDisplayMode(display_id);
-    
     size_t pixelWidth = CGDisplayModeGetPixelWidth(mode);
     size_t pixelHeight = CGDisplayModeGetPixelHeight(mode);
-    
     CGDisplayModeRelease(mode);
+    
+    my_sock = new MySocket();
+    my_sock->Listening();
+    sem = dispatch_semaphore_create(0);
+    sendQueue = dispatch_queue_create("SEND_QUEUE", DISPATCH_QUEUE_SERIAL);
+    displayStreamQueue = dispatch_queue_create("MLDESKTOP_QUEUE", DISPATCH_QUEUE_SERIAL);
+    
     stream = CGDisplayStreamCreateWithDispatchQueue(display_id,
                                                     pixelWidth,
                                                     pixelHeight,
@@ -156,13 +113,9 @@ int main(){
     
     CGDisplayStreamStart(stream);
     
-    
-    
-    usleep(50000000000);
+    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     
     CGDisplayStreamStop(stream);
-    
-    
     
     printf("Done!\n");
     

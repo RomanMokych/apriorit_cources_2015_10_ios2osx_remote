@@ -74,6 +74,14 @@
     }
     if (buttonIndex == 1)
     {
+        [_inputStream close];
+        [_inputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        printf("END\n");
+        
+        _inputStream = nil;
+        [_outputStream close];
+        [_outputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        _outputStream = nil;
         exit(0);
     }
     if (buttonIndex == 2)
