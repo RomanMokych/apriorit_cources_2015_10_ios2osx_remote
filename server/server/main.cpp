@@ -17,6 +17,7 @@
 
 MySocket *my_sock;
 CGDisplayStreamRef stream;
+bool doubleClick=false;
 
 void ConvertCoord(CGFloat &x, CGFloat &y)
 {
@@ -31,6 +32,19 @@ void simulateMouseEvent(CGEventType eventType, CGPoint point)
     CGEventRef event = CGEventCreateMouseEvent(CGEventSourceCreate(kCGEventSourceStateHIDSystemState), eventType, point, kCGMouseButtonLeft);
     CGEventPost(kCGHIDEventTap, event);
     CFRelease(event);
+}
+void DoubleClick(CGPoint point)
+{
+    CGEventRef theEvent = CGEventCreateMouseEvent(NULL, kCGEventLeftMouseDown, point, kCGMouseButtonLeft);
+    CGEventSetIntegerValueField(theEvent, kCGMouseEventClickState, 2);
+    CGEventPost(kCGHIDEventTap, theEvent);
+    CGEventSetType(theEvent, kCGEventLeftMouseUp);
+    CGEventPost(kCGHIDEventTap, theEvent);
+    CGEventSetType(theEvent, kCGEventLeftMouseDown);
+    CGEventPost(kCGHIDEventTap, theEvent);
+    CGEventSetType(theEvent, kCGEventLeftMouseUp);
+    CGEventPost(kCGHIDEventTap, theEvent);
+    CFRelease(theEvent);
 }
 
 dispatch_queue_t displayStreamQueue;
@@ -55,15 +69,25 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
                        }
                        if (mas[0]==2)
                        {
+                           if(doubleClick)
+                           {
+                               simulateMouseEvent(kCGEventLeftMouseDown, p);
+                               doubleClick=false;
+                           }
                            simulateMouseEvent(kCGEventLeftMouseDragged, p);
                        }
                        if (mas[0]==3)
                        {
+                           if(doubleClick)
+                           {
+                               doubleClick=false;
+                               DoubleClick(p);
+                           }
                            simulateMouseEvent(kCGEventLeftMouseUp, p);
                        }
                        if (mas[0]==4)
                        {
-                           simulateMouseEvent(kCGEventLeftMouseDown, p);
+                           doubleClick=true;
                        }
                    });
     

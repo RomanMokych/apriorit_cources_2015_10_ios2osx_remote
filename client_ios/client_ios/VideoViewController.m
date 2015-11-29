@@ -35,7 +35,7 @@
     
     
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
-    tapGesture.numberOfTapsRequired = 2;
+    tapGesture.numberOfTapsRequired = 1;
     [self.view addGestureRecognizer:tapGesture];
     //[tapGesture release];
     
@@ -44,7 +44,7 @@
 
 - (void)handleTapGesture:(UITapGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateRecognized) {
-           printf("double tap\n");
+        printf("double tap\n");
         doubleTap = true;
     }
 }
@@ -61,17 +61,17 @@
 
 
 /*- (void) handleLongPressGestures:(UILongPressGestureRecognizer *)paramSender
-{
-    paramSender.minimumPressDuration = 2.0;
-    if ([paramSender isEqual:self.longPressGestureRecognizer])
-    {
-        if (paramSender.numberOfTouchesRequired == 2)
-        {
-            
-            //[_alert show];
-        }
-    }
-}*/
+ {
+ paramSender.minimumPressDuration = 2.0;
+ if ([paramSender isEqual:self.longPressGestureRecognizer])
+ {
+ if (paramSender.numberOfTouchesRequired == 2)
+ {
+ 
+ //[_alert show];
+ }
+ }
+ }*/
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 0)
@@ -99,11 +99,23 @@
     
     printf("x: %f  y: %f\n", pointX, pointY);
     
-    point[0] = 1;
-    point[1] = pointX;
-    point[2] = pointY;
-    
-    [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+    if (!doubleTap)
+    {
+        
+        point[0] = 1;
+        point[1] = pointX;
+        point[2] = pointY;
+        [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+    }
+    else if (doubleTap)
+    {
+        point[0] = 4;
+        point[1] = pointX;
+        point[2] = pointY;
+        
+        [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+        doubleTap = false;
+    }
     
 }
 - (void) touchesMoved:(NSSet *)touches
@@ -116,23 +128,23 @@
     
     printf("move   x: %f  y: %f\n", pointX, pointY);
     
-    if (!doubleTap)
-    {
-        point[0] = 2;
-        point[1] = pointX;
-        point[2] = pointY;
+    /*if (!doubleTap)
+     {*/
+    point[0] = 2;
+    point[1] = pointX;
+    point[2] = pointY;
     
-        [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
-    }
-    else if (doubleTap)
-    {
-        point[0] = 4;
-        point[1] = pointX;
-        point[2] = pointY;
-        
-        [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
-        doubleTap = false;
-    }
+    [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+    /*}
+     else if (doubleTap)
+     {
+     point[0] = 4;
+     point[1] = pointX;
+     point[2] = pointY;
+     
+     [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+     doubleTap = false;
+     }*/
     
 }
 - (void) touchesEnded:(NSSet *)touches
@@ -209,9 +221,9 @@
                                    int *rect = (int*)malloc(sizeof(int)*4);
                                    [_inputStream read:(unsigned char*)rect maxLength:sizeof(int)*4];
                                    /*for (int i =0; i<4; i++)
-                                   {
-                                       printf("rect[%d] %d\n",i,rect[i]);
-                                   }*/
+                                    {
+                                    printf("rect[%d] %d\n",i,rect[i]);
+                                    }*/
                                    long size;
                                    [_inputStream read:(unsigned char*)&size maxLength:sizeof(long)];
                                    //printf("size  %ld\n", size);
@@ -252,11 +264,11 @@
             
         case NSStreamEventEndEncountered:
             
-                               [theStream close];
-                               [theStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-                               printf("END\n");
-                               theStream = nil;
-                               [_alertErr show];
+            [theStream close];
+            [theStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+            printf("END\n");
+            theStream = nil;
+            [_alertErr show];
             break;
         default:
             NSLog(@"Unknown event");
