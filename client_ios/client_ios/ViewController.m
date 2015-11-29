@@ -41,9 +41,8 @@ static NSString *_ip;
 }
 
 - (IBAction)toMyServer:(id)sender {
-    self.ipField.text = @"10.0.0.186";
-    //self.portField.text = @"7891";
-    _port = 7891;
+    self.ipField.text = @"10.0.0.174";
+    self.portField.text = @"7891";
     
     [self performSegueWithIdentifier:@"showVideoController" sender:nil];
 }
@@ -53,8 +52,7 @@ static NSString *_ip;
     if ([segue.identifier isEqualToString:@"showVideoController"])
     {
         NSString* ip = [self.ipField text];
-        //int port = [self.portField.text intValue];
-        int port = _port;
+        int port = [self.portField.text intValue];
         VideoViewController *dest = segue.destinationViewController;
         dest.ip = ip;
         dest.port = port;
@@ -73,6 +71,13 @@ static NSString *_ip;
     }
     return YES;
 }
+
+
+
+
+
+
+
 
 
 

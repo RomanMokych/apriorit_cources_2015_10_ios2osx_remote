@@ -8,12 +8,19 @@
 
 #import <UIKit/UIKit.h>
 #import "ViewController.h"
-#import "MySocket.h"
 #import "MyImage.h"
 
 
 @interface VideoViewController : UIViewController <NSStreamDelegate, UIAlertViewDelegate>
-{dispatch_queue_t recvQueue;}
+{dispatch_queue_t recvQueue, sendQueue;
+    
+    UITouch *touch;
+    CGPoint pointScr;
+    CGFloat pointX;
+    CGFloat pointY;
+    
+    double point[3];
+}
 
 @property (nonatomic, strong) NSString* ip;
 @property int port;
@@ -24,7 +31,7 @@
 
 @property MyImage* myImage;
 //@property NSTimer* timer;
-@property MySocket* Socket;
+
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 
@@ -33,6 +40,8 @@
 
 @property (strong, nonatomic) UIAlertView* alert;
 @property (strong, nonatomic) UIAlertView* alertErr;
+
+-(void)closeSocket;
 
 
 @end

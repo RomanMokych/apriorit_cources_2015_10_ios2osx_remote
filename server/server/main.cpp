@@ -18,12 +18,60 @@
 MySocket *my_sock;
 CGDisplayStreamRef stream;
 
+void ConvertCoord(CGFloat &x, CGFloat &y)
+{
+    x*=(1920.0/667.0);
+    y*=(940.0/375.0);
+}
+
+
+void simulateMouseEvent(CGEventType eventType, CGPoint point)
+{
+    // Create and post the event
+    CGEventRef event = CGEventCreateMouseEvent(CGEventSourceCreate(kCGEventSourceStateHIDSystemState), eventType, point, kCGMouseButtonLeft);
+    CGEventPost(kCGHIDEventTap, event);
+    CFRelease(event);
+}
 
 dispatch_queue_t displayStreamQueue;
 dispatch_queue_t sendQueue;
+dispatch_queue_t eventQueue;
 dispatch_semaphore_t sem;
 void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef) =  ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
 {
+    
+    dispatch_async(eventQueue,
+                   ^{
+                       double *mas = new double[3];
+                       mas = my_sock->Recv();
+                       CGPoint p;
+                       p.x = mas[1];
+                       p.y = mas[2];
+                       ConvertCoord(p.x, p.y);
+                       if (mas[0]==1)
+                       {
+                           simulateMouseEvent(kCGEventLeftMouseDown, p);
+                       }
+                       if (mas[0]==2)
+                       {
+                           simulateMouseEvent(kCGEventLeftMouseDragged, p);
+                       }
+                       if (mas[0]==3)
+                       {
+                           simulateMouseEvent(kCGEventLeftMouseUp, p);
+                       }
+                   });
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     CGRect uRect;
     
     const CGRect * rects;
@@ -100,6 +148,7 @@ int main(){
     sem = dispatch_semaphore_create(0);
     sendQueue = dispatch_queue_create("SEND_QUEUE", DISPATCH_QUEUE_SERIAL);
     displayStreamQueue = dispatch_queue_create("MLDESKTOP_QUEUE", DISPATCH_QUEUE_SERIAL);
+    eventQueue = dispatch_queue_create("EVENT_QUEUE", DISPATCH_QUEUE_SERIAL);
     
     stream = CGDisplayStreamCreateWithDispatchQueue(display_id,
                                                     pixelWidth,
@@ -112,6 +161,8 @@ int main(){
     
     
     CGDisplayStreamStart(stream);
+    
+    
     
     dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     

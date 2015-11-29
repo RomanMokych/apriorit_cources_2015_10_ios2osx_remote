@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7A64F4FA1BF50F4D009DAB2E /* MySocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A64F4F91BF50F4D009DAB2E /* MySocket.m */; };
 		847325B01BFCA3B600A5EC9A /* MyImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 847325AF1BFCA3B600A5EC9A /* MyImage.m */; };
 		84E0C9C01BD8103E00D3D650 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E0C9BF1BD8103E00D3D650 /* main.m */; };
 		84E0C9C31BD8103E00D3D650 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 84E0C9C21BD8103E00D3D650 /* AppDelegate.m */; };
@@ -18,8 +17,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7A64F4F81BF50F4D009DAB2E /* MySocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MySocket.h; sourceTree = "<group>"; };
-		7A64F4F91BF50F4D009DAB2E /* MySocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MySocket.m; sourceTree = "<group>"; };
 		847325AE1BFCA3B600A5EC9A /* MyImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyImage.h; sourceTree = "<group>"; };
 		847325AF1BFCA3B600A5EC9A /* MyImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyImage.m; sourceTree = "<group>"; };
 		84E0C9BB1BD8103E00D3D650 /* client_ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = client_ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,8 +66,6 @@
 				84E0C9C21BD8103E00D3D650 /* AppDelegate.m */,
 				84E0C9C41BD8103E00D3D650 /* ViewController.h */,
 				84E0C9C51BD8103E00D3D650 /* ViewController.m */,
-				7A64F4F81BF50F4D009DAB2E /* MySocket.h */,
-				7A64F4F91BF50F4D009DAB2E /* MySocket.m */,
 				847325AE1BFCA3B600A5EC9A /* MyImage.h */,
 				847325AF1BFCA3B600A5EC9A /* MyImage.m */,
 				84E0C9C71BD8103E00D3D650 /* Main.storyboard */,
@@ -161,7 +156,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7A64F4FA1BF50F4D009DAB2E /* MySocket.m in Sources */,
 				847325B01BFCA3B600A5EC9A /* MyImage.m in Sources */,
 				84E16D101C037984002FCF28 /* VideoViewController.m in Sources */,
 				84E0C9C61BD8103E00D3D650 /* ViewController.m in Sources */,

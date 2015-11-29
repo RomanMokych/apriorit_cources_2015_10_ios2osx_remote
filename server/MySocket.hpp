@@ -29,10 +29,15 @@ private:
     struct sockaddr_in serverAddr;
     struct sockaddr_storage serverStorage;
     socklen_t addr_size;
+    double *mas;
 public:
     MySocket();
     ~MySocket();
     void Listening();
     void Conection();
     int Send(unsigned char*, long,int*);
+    double* Recv();
+    
+    
+    
 };
