@@ -20,6 +20,7 @@
     CGFloat pointY;
     
     double point[3];
+    bool doubleTap;
 }
 
 @property (nonatomic, strong) NSString* ip;
@@ -35,11 +36,12 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 
-@property (nonatomic, strong) UILongPressGestureRecognizer *longPressGestureRecognizer;
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinchGestureRecognizer;
 
 @property (strong, nonatomic) UIAlertView* alert;
 @property (strong, nonatomic) UIAlertView* alertErr;
+
+-(IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer;
 
 -(void)closeSocket;
 

@@ -112,12 +112,16 @@
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="Gks-bP-zPn" firstAttribute="top" secondItem="EoU-U5-BCg" secondAttribute="top" id="70d-sQ-41y"/>
                             <constraint firstItem="w4c-yy-DN6" firstAttribute="top" secondItem="Gks-bP-zPn" secondAttribute="bottom" id="Fwn-Nh-0z0"/>
                             <constraint firstItem="Gks-bP-zPn" firstAttribute="leading" secondItem="EoU-U5-BCg" secondAttribute="leading" id="pgK-su-oWh"/>
                             <constraint firstAttribute="trailing" secondItem="Gks-bP-zPn" secondAttribute="trailing" id="yKt-Gl-aAz"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="GdD-Kt-d5G" appends="YES" id="kyb-8b-gK1"/>
+                        </connections>
                     </view>
                     <connections>
                         <outlet property="imageView" destination="Gks-bP-zPn" id="Ojb-Vd-xpJ"/>
@@ -126,6 +130,11 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="F7C-0U-gzi" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="oo4-5F-Gig" userLabel="Exit" sceneMemberID="exit"/>
+                <pinchGestureRecognizer id="GdD-Kt-d5G">
+                    <connections>
+                        <action selector="handlePinch:" destination="pbA-f4-Q23" id="VA6-H3-j3U"/>
+                    </connections>
+                </pinchGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="781" y="111"/>
         </scene>

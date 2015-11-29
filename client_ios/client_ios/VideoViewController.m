@@ -21,13 +21,6 @@
     [super viewDidLoad];
     [self toMyServer];
     
-    self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGestures:)];
-    self.longPressGestureRecognizer.numberOfTouchesRequired = 1;
-    self.longPressGestureRecognizer.allowableMovement = 100.0f;
-    self.longPressGestureRecognizer.minimumPressDuration = 1.0;
-    
-    [self.view addGestureRecognizer:self.longPressGestureRecognizer];
-    
     _alert = [[UIAlertView alloc] initWithTitle:@""
                                         message:@"Choose some action"
                                        delegate:self
@@ -39,20 +32,46 @@
                                           delegate:self
                                  cancelButtonTitle:@"Ok"
                                  otherButtonTitles:nil];
+    
+    
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
+    tapGesture.numberOfTapsRequired = 2;
+    [self.view addGestureRecognizer:tapGesture];
+    //[tapGesture release];
+    
+    doubleTap = false;
 }
 
-
-
-- (void) handleLongPressGestures:(UILongPressGestureRecognizer *)paramSender
-{
-    if ([paramSender isEqual:self.longPressGestureRecognizer])
-    {
-        if (paramSender.numberOfTouchesRequired == 1)
-        {
-            [_alert show];
-        }
+- (void)handleTapGesture:(UITapGestureRecognizer *)sender {
+    if (sender.state == UIGestureRecognizerStateRecognized) {
+           printf("double tap\n");
+        doubleTap = true;
     }
 }
+
+
+-(IBAction) handlePinch:(UIPinchGestureRecognizer *)recognizer
+{
+    recognizer.scale = 1.0;
+    recognizer.view.transform = CGAffineTransformScale(recognizer.view.transform, recognizer.scale, recognizer.scale);
+    recognizer.scale = 1.0;
+    [_alert show];
+}
+
+
+
+/*- (void) handleLongPressGestures:(UILongPressGestureRecognizer *)paramSender
+{
+    paramSender.minimumPressDuration = 2.0;
+    if ([paramSender isEqual:self.longPressGestureRecognizer])
+    {
+        if (paramSender.numberOfTouchesRequired == 2)
+        {
+            
+            //[_alert show];
+        }
+    }
+}*/
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 0)
@@ -97,11 +116,24 @@
     
     printf("move   x: %f  y: %f\n", pointX, pointY);
     
-    point[0] = 2;
-    point[1] = pointX;
-    point[2] = pointY;
+    if (!doubleTap)
+    {
+        point[0] = 2;
+        point[1] = pointX;
+        point[2] = pointY;
     
-    [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+        [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+    }
+    else if (doubleTap)
+    {
+        point[0] = 4;
+        point[1] = pointX;
+        point[2] = pointY;
+        
+        [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+        doubleTap = false;
+    }
+    
 }
 - (void) touchesEnded:(NSSet *)touches
             withEvent:(UIEvent *)event

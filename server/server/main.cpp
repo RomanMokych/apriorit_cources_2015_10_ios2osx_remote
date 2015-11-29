@@ -51,6 +51,7 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
                        if (mas[0]==1)
                        {
                            simulateMouseEvent(kCGEventLeftMouseDown, p);
+                           simulateMouseEvent(kCGEventLeftMouseUp, p);
                        }
                        if (mas[0]==2)
                        {
@@ -59,6 +60,10 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
                        if (mas[0]==3)
                        {
                            simulateMouseEvent(kCGEventLeftMouseUp, p);
+                       }
+                       if (mas[0]==4)
+                       {
+                           simulateMouseEvent(kCGEventLeftMouseDown, p);
                        }
                    });
     
