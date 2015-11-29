@@ -131,8 +131,10 @@
 }
 
 
-- (void)stream:(NSStream *)theStream handleEvent:(NSStreamEvent)streamEvent {
+- (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)streamEvent {
     
+    __block NSStream *theStream = stream;
+    dispatch_async(recvQueue, ^(void){
     NSLog(@"stream event %lu", (unsigned long)streamEvent);
     
     switch (streamEvent) {
@@ -146,7 +148,7 @@
             {
                 
                 
-                dispatch_async(recvQueue, ^(void){
+                
                     int *rect = (int*)malloc(sizeof(int)*4);
                     [_inputStream read:(unsigned char*)rect maxLength:sizeof(int)*4];
                     for (int i =0; i<4; i++)
@@ -180,7 +182,7 @@
                     });
                     free(buffer);
                     free(rect);
-                });
+               
             }
             break;
             
@@ -202,7 +204,19 @@
         default:
             NSLog(@"Unknown event");
     }
+    });
     
+}
+
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [_inputStream close];
+    [_inputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    printf("END\n");
+    _inputStream = nil;
+    [_outputStream close];
+    [_outputStream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    _outputStream = nil;
 }
 
 @end

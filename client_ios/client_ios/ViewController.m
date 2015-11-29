@@ -41,7 +41,7 @@ static NSString *_ip;
 }
 
 - (IBAction)toMyServer:(id)sender {
-    self.ipField.text = @"10.0.0.207";
+    self.ipField.text = @"10.0.0.186";
     //self.portField.text = @"7891";
     _port = 7891;
     
