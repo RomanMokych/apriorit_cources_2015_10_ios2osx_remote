@@ -24,7 +24,7 @@ int moveCount=0;
 void ConvertCoord(CGFloat &x, CGFloat &y)
 {
     x*=(1920.0/1024.0);
-    y*=(940.0/761.0);
+    y*=(1080.0/761.0);
 }
 
 
@@ -65,7 +65,7 @@ dispatch_semaphore_t sem;void (^handleStream)(CGDisplayStreamFrameStatus, uint64
                        ConvertCoord(p.x, p.y);
                        if (mas[0]==1)
                        {
-                           //if(up==true)
+                           if(up==true)
                            {
                                up=false;
                                down=true;
@@ -75,7 +75,6 @@ dispatch_semaphore_t sem;void (^handleStream)(CGDisplayStreamFrameStatus, uint64
                        {
                            if(down==true)
                            {
-                               moveCount++;
                                move=true;
                                if(doubleClick==true)
                                {
@@ -91,14 +90,14 @@ dispatch_semaphore_t sem;void (^handleStream)(CGDisplayStreamFrameStatus, uint64
                            {
                                simulateMouseEvent(kCGEventLeftMouseDown, p);
                                simulateMouseEvent(kCGEventLeftMouseUp, p);
+                               up=true;
                            }
                            else
                            {
                                simulateMouseEvent(kCGEventLeftMouseUp, p);
+                               move=false;
+                               up=true;
                            }
-                           moveCount=0;
-                           up=true;
-                           move=false;
                        }
                        if (mas[0]==4)
                        {
@@ -111,15 +110,6 @@ dispatch_semaphore_t sem;void (^handleStream)(CGDisplayStreamFrameStatus, uint64
                                           delete[] mas;
                                       });
                    });
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     CGRect uRect;
     

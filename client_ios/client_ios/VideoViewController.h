@@ -38,7 +38,7 @@
 
 
 @property MyImage* myImage;
-//@property NSTimer* timer;
+
 
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
@@ -48,7 +48,7 @@
 @property (strong, nonatomic) UIAlertView* alert;
 @property (strong, nonatomic) UIAlertView* alertErr;
 
-//@property (strong, nonatomic) UITapGestureRecognizer *tapGesture;
+
 
 -(IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer;
 

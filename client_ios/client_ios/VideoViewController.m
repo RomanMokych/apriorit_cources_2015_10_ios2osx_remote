@@ -36,44 +36,12 @@
                                  cancelButtonTitle:@"Ok"
                                  otherButtonTitles:nil];
     
-    
-   // _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
-   // _tapGesture.numberOfTapsRequired = 2;
-  //  [self.view addGestureRecognizer:_tapGesture];
-    //[tapGesture release];
-    
+
     doubleTap = false;
     doubleTapDo = false;
     doubleTapSqr = 0;
     doubleTapMove = 0;
 }
-
-/*- (void)handleTapGesture:(UITapGestureRecognizer *)sender {
-    if (sender.state == UIGestureRecognizerStateRecognized) {
-        NSLog(@"double tap\n");
-        doubleTap = true;
-        
-        if (_tapGesture.state == UIGestureRecognizerStateEnded)
-        {
-            doubleTapDo = true;
-            NSLog(@"end double taaaaaaaaaaaap\n\n");
-            
-            
-            if (doubleTapDo)
-            {
-                NSLog(@"gggggggggggggggggggg\n");
-        
-                doubleTapDo = false;
-            }
-            
-            //
-            //doubleTapSqr++;
-
-        }
-    }
-}*/
-
-
 -(IBAction) handlePinch:(UIPinchGestureRecognizer *)recognizer
 {
     recognizer.scale = 1.0;
@@ -82,20 +50,6 @@
     [_alert show];
 }
 
-
-
-/*- (void) handleLongPressGestures:(UILongPressGestureRecognizer *)paramSender
- {
- paramSender.minimumPressDuration = 2.0;
- if ([paramSender isEqual:self.longPressGestureRecognizer])
- {
- if (paramSender.numberOfTouchesRequired == 2)
- {
- 
- //[_alert show];
- }
- }
- }*/
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 0)
@@ -120,25 +74,12 @@
     pointScr = [touch locationInView:self.view];
     pointX = pointScr.x;
     pointY = pointScr.y;
-    
-    NSLog(@"x: %f  y: %f\n", pointX, pointY);
-    /*if (doubleTap)
-    {
-        point[0] = 4;
-        point[1] = pointX;
-        point[2] = pointY;
-        
-        [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
-        doubleTap = false;
-        doubleTapDo = false;
-    }
-    else
-    {*/
+
         point[0] = 1;
         point[1] = pointX;
         point[2] = pointY;
         [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
-    //}
+    
     
     doubleTapSqr++;
     doubleTapMove++;
@@ -146,7 +87,7 @@
     {
         xx  = pointX;
         yy = pointY;
-        //doubleTapSqr++;
+    
     }
     
     if (doubleTapSqr == 2 || doubleTapMove == 2)
@@ -174,10 +115,6 @@
     pointX = pointScr.x;
     pointY = pointScr.y;
     
-    printf("move   x: %f  y: %f\n", pointX, pointY);
-    
-    
-    
     if (doubleTapMove == 3)
     {
         point[0] = 4;
@@ -187,7 +124,7 @@
         [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
         doubleTapMove = 0;
         doubleTapSqr=0;
-        printf("douubletap and move\n");
+
     }
     point[0] = 2;
     point[1] = pointX;
@@ -207,7 +144,6 @@
     
     
     
-    NSLog(@"end   x: %f  y: %f\n", pointX, pointY);
     if (doubleTapSqr == 3)
     {
         point[0] = 5;
@@ -240,7 +176,7 @@
     recvQueue = dispatch_queue_create("RECV_QUEUE", DISPATCH_QUEUE_SERIAL);
     [self initNetworkCommunicationWithIp:_ip andPort:_port];
     
-    _myImage = [[MyImage alloc] initWithWidth:1920   andHeigth:940];
+    _myImage = [[MyImage alloc] initWithWidth:1920   andHeigth:1080];
 }
 
 - (void)initNetworkCommunicationWithIp: (NSString*)ipS andPort:(int)portS
@@ -266,7 +202,7 @@
 - (void)stream:(NSStream *)stream handleEvent:(NSStreamEvent)streamEvent {
     
     __block NSStream *theStream = stream;
-    //NSLog(@"stream event %lu", (unsigned long)streamEvent);
+
     
     switch (streamEvent)
     {
@@ -283,10 +219,7 @@
                                ^(void)                                                  {
                                    int *rect = (int*)malloc(sizeof(int)*4);
                                    [_inputStream read:(unsigned char*)rect maxLength:sizeof(int)*4];
-                                   /*for (int i =0; i<4; i++)
-                                    {
-                                    printf("rect[%d] %d\n",i,rect[i]);
-                                    }*/
+
                                    long size;
                                    [_inputStream read:(unsigned char*)&size maxLength:sizeof(long)];
                                    //printf("size  %ld\n", size);
