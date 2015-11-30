@@ -18,11 +18,13 @@
 MySocket *my_sock;
 CGDisplayStreamRef stream;
 bool doubleClick=false;
+bool move=false, down=false, up=true;
+int moveCount=0;
 
 void ConvertCoord(CGFloat &x, CGFloat &y)
 {
-    x*=(1920.0/667.0);
-    y*=(940.0/375.0);
+    x*=(1920.0/1024.0);
+    y*=(940.0/761.0);
 }
 
 
@@ -50,8 +52,7 @@ void DoubleClick(CGPoint point)
 dispatch_queue_t displayStreamQueue;
 dispatch_queue_t sendQueue;
 dispatch_queue_t eventQueue;
-dispatch_semaphore_t sem;
-void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef) =  ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
+dispatch_semaphore_t sem;void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef) =  ^(CGDisplayStreamFrameStatus status, uint64_t displayTime, IOSurfaceRef frameSurface, CGDisplayStreamUpdateRef updateRef)
 {
     
     dispatch_async(eventQueue,
@@ -64,33 +65,52 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
                        ConvertCoord(p.x, p.y);
                        if (mas[0]==1)
                        {
-                           simulateMouseEvent(kCGEventLeftMouseDown, p);
-                           simulateMouseEvent(kCGEventLeftMouseUp, p);
+                           //if(up==true)
+                           {
+                               up=false;
+                               down=true;
+                           }
                        }
                        if (mas[0]==2)
                        {
-                           if(doubleClick)
+                           if(down==true)
                            {
-                               simulateMouseEvent(kCGEventLeftMouseDown, p);
-                               doubleClick=false;
+                               moveCount++;
+                               move=true;
+                               if(doubleClick==true)
+                               {
+                                   simulateMouseEvent(kCGEventLeftMouseDown, p);
+                                   doubleClick=false;
+                               }
+                               simulateMouseEvent(kCGEventLeftMouseDragged, p);
                            }
-                           simulateMouseEvent(kCGEventLeftMouseDragged, p);
                        }
                        if (mas[0]==3)
                        {
-                           if(doubleClick)
+                           if(move==false)
                            {
-                               doubleClick=false;
-                               DoubleClick(p);
+                               simulateMouseEvent(kCGEventLeftMouseDown, p);
+                               simulateMouseEvent(kCGEventLeftMouseUp, p);
                            }
-                           simulateMouseEvent(kCGEventLeftMouseUp, p);
+                           else
+                           {
+                               simulateMouseEvent(kCGEventLeftMouseUp, p);
+                           }
+                           moveCount=0;
+                           up=true;
+                           move=false;
                        }
                        if (mas[0]==4)
                        {
                            doubleClick=true;
                        }
+                       if (mas[0] == 5)
+                           DoubleClick(p);
+                       dispatch_async(dispatch_get_main_queue(),
+                                      ^{
+                                          delete[] mas;
+                                      });
                    });
-    
     
     
     
@@ -139,27 +159,35 @@ void (^handleStream)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDispl
     CGContextDrawImage(bitmapContext,
                        CGRectMake(0,0,width,height),
                        testImage);
-    unsigned char *bitmap = new unsigned char[width * height * sizeof(unsigned char*) * 4];
-    bitmap = (unsigned char*)CGBitmapContextGetData(bitmapContext);
     
-    dispatch_async(sendQueue, ^(void){
-        
-        int infoRect[4];
-        infoRect[0]=uRect.origin.x;
-        infoRect[1]=uRect.origin.y;
-        infoRect[2]=uRect.origin.x + uRect.size.width;
-        infoRect[3]=uRect.origin.y + uRect.size.height;
-        
-        if (my_sock->Send(bitmap, width * height * sizeof(unsigned char) * 4, infoRect) == -1)
-        {
-            
-            dispatch_sync(dispatch_queue_create("queue", DISPATCH_QUEUE_SERIAL), ^{
-                dispatch_suspend(sendQueue);
-                CGDisplayStreamStop(stream);
-                dispatch_semaphore_signal(sem);
-            });
-        }
-    });
+    
+    //bitmap = new unsigned char[width * height * sizeof(unsigned char*) * 4];
+    
+    unsigned char *bitmap = (unsigned char*)CGBitmapContextGetData(bitmapContext);
+    dispatch_async(sendQueue,
+                   ^(void){
+                       int infoRect[4];
+                       infoRect[0]=uRect.origin.x;
+                       infoRect[1]=uRect.origin.y;
+                       infoRect[2]=uRect.origin.x + uRect.size.width;
+                       infoRect[3]=uRect.origin.y + uRect.size.height;
+                       
+                       if (my_sock->Send(bitmap, width * height * sizeof(unsigned char) * 4, infoRect) == -1)
+                       {
+                           
+                           dispatch_sync(dispatch_queue_create("queue", DISPATCH_QUEUE_SERIAL), ^{
+                               dispatch_suspend(sendQueue);
+                               CGDisplayStreamStop(stream);
+                               dispatch_semaphore_signal(sem);
+                           });
+                       }
+                   });
+    dispatch_async(dispatch_get_main_queue(),
+                   ^{
+                       delete[] rects;
+                       delete[] bitmap;
+                   });
+    //delete[] bitmap;
 };
 
 int main(){

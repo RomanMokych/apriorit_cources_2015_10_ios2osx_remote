@@ -12,15 +12,22 @@
 
 
 @interface VideoViewController : UIViewController <NSStreamDelegate, UIAlertViewDelegate>
-{dispatch_queue_t recvQueue, sendQueue;
+{
+    dispatch_queue_t recvQueue, sendQueue;
     
     UITouch *touch;
     CGPoint pointScr;
     CGFloat pointX;
     CGFloat pointY;
     
+    double xx;
+    double yy;
+    
     double point[3];
     bool doubleTap;
+    bool doubleTapDo;
+    int doubleTapSqr;
+    int doubleTapMove;
 }
 
 @property (nonatomic, strong) NSString* ip;
@@ -40,6 +47,8 @@
 
 @property (strong, nonatomic) UIAlertView* alert;
 @property (strong, nonatomic) UIAlertView* alertErr;
+
+//@property (strong, nonatomic) UITapGestureRecognizer *tapGesture;
 
 -(IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer;
 

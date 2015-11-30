@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7A48A94B1BF0A8B500C3456F /* MyScreenStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A48A9491BF0A8B500C3456F /* MyScreenStream.cpp */; settings = {ASSET_TAGS = (); }; };
-		7A48A94F1BF0AAFE00C3456F /* MySocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A48A94D1BF0AAFE00C3456F /* MySocket.cpp */; settings = {ASSET_TAGS = (); }; };
+		7A48A94F1BF0AAFE00C3456F /* MySocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A48A94D1BF0AAFE00C3456F /* MySocket.cpp */; };
 		7A562CF61BF298E0006EBD17 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A562CF51BF298E0006EBD17 /* ApplicationServices.framework */; };
 		7A562CF81BF298F5006EBD17 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A562CF71BF298F5006EBD17 /* OpenGL.framework */; };
 		7A562CFA1BF298FC006EBD17 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A562CF91BF298FC006EBD17 /* GLUT.framework */; };
@@ -31,8 +30,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		7A48A9491BF0A8B500C3456F /* MyScreenStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MyScreenStream.cpp; sourceTree = "<group>"; };
-		7A48A94A1BF0A8B500C3456F /* MyScreenStream.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MyScreenStream.hpp; sourceTree = "<group>"; };
 		7A48A94D1BF0AAFE00C3456F /* MySocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MySocket.cpp; sourceTree = "<group>"; };
 		7A48A94E1BF0AAFE00C3456F /* MySocket.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MySocket.hpp; sourceTree = "<group>"; };
 		7A562CF51BF298E0006EBD17 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
@@ -73,8 +70,6 @@
 				7A562CF51BF298E0006EBD17 /* ApplicationServices.framework */,
 				7A48A94D1BF0AAFE00C3456F /* MySocket.cpp */,
 				7A48A94E1BF0AAFE00C3456F /* MySocket.hpp */,
-				7A48A9491BF0A8B500C3456F /* MyScreenStream.cpp */,
-				7A48A94A1BF0A8B500C3456F /* MyScreenStream.hpp */,
 				84E257951BD65E9D0011C41D /* server */,
 				84E257941BD65E9D0011C41D /* Products */,
 			);
@@ -153,7 +148,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				84E257971BD65E9D0011C41D /* main.cpp in Sources */,
-				7A48A94B1BF0A8B500C3456F /* MyScreenStream.cpp in Sources */,
 				7A48A94F1BF0AAFE00C3456F /* MySocket.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

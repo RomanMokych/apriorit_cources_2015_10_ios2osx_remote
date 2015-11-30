@@ -16,6 +16,9 @@
 
 @synthesize alert = _alert;
 @synthesize alertErr = _alertErr;
+//@synthesize tapGesture = _tapGesture;
+
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -34,20 +37,41 @@
                                  otherButtonTitles:nil];
     
     
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
-    tapGesture.numberOfTapsRequired = 1;
-    [self.view addGestureRecognizer:tapGesture];
+   // _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
+   // _tapGesture.numberOfTapsRequired = 2;
+  //  [self.view addGestureRecognizer:_tapGesture];
     //[tapGesture release];
     
     doubleTap = false;
+    doubleTapDo = false;
+    doubleTapSqr = 0;
+    doubleTapMove = 0;
 }
 
-- (void)handleTapGesture:(UITapGestureRecognizer *)sender {
+/*- (void)handleTapGesture:(UITapGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateRecognized) {
-        printf("double tap\n");
+        NSLog(@"double tap\n");
         doubleTap = true;
+        
+        if (_tapGesture.state == UIGestureRecognizerStateEnded)
+        {
+            doubleTapDo = true;
+            NSLog(@"end double taaaaaaaaaaaap\n\n");
+            
+            
+            if (doubleTapDo)
+            {
+                NSLog(@"gggggggggggggggggggg\n");
+        
+                doubleTapDo = false;
+            }
+            
+            //
+            //doubleTapSqr++;
+
+        }
     }
-}
+}*/
 
 
 -(IBAction) handlePinch:(UIPinchGestureRecognizer *)recognizer
@@ -97,17 +121,8 @@
     pointX = pointScr.x;
     pointY = pointScr.y;
     
-    printf("x: %f  y: %f\n", pointX, pointY);
-    
-    if (!doubleTap)
-    {
-        
-        point[0] = 1;
-        point[1] = pointX;
-        point[2] = pointY;
-        [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
-    }
-    else if (doubleTap)
+    NSLog(@"x: %f  y: %f\n", pointX, pointY);
+    /*if (doubleTap)
     {
         point[0] = 4;
         point[1] = pointX;
@@ -115,7 +130,40 @@
         
         [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
         doubleTap = false;
+        doubleTapDo = false;
     }
+    else
+    {*/
+        point[0] = 1;
+        point[1] = pointX;
+        point[2] = pointY;
+        [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+    //}
+    
+    doubleTapSqr++;
+    doubleTapMove++;
+    if (doubleTapSqr == 1 || doubleTapMove == 1)
+    {
+        xx  = pointX;
+        yy = pointY;
+        //doubleTapSqr++;
+    }
+    
+    if (doubleTapSqr == 2 || doubleTapMove == 2)
+    {
+        if (((pointX <= (xx+15))&& (pointX >= (xx-15))) && ((pointY <= (yy + 15)) && (pointY >= (yy - 15))) )
+        {
+            doubleTapSqr++;
+            doubleTapMove++;
+        }
+        else
+        {
+            doubleTapSqr = 0;
+            doubleTapMove = 0;
+        }
+    }
+   
+
     
 }
 - (void) touchesMoved:(NSSet *)touches
@@ -128,23 +176,25 @@
     
     printf("move   x: %f  y: %f\n", pointX, pointY);
     
-    /*if (!doubleTap)
-     {*/
+    
+    
+    if (doubleTapMove == 3)
+    {
+        point[0] = 4;
+        point[1] = pointX;
+        point[2] = pointY;
+        
+        [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+        doubleTapMove = 0;
+        doubleTapSqr=0;
+        printf("douubletap and move\n");
+    }
     point[0] = 2;
     point[1] = pointX;
     point[2] = pointY;
     
     [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
-    /*}
-     else if (doubleTap)
-     {
-     point[0] = 4;
-     point[1] = pointX;
-     point[2] = pointY;
-     
-     [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
-     doubleTap = false;
-     }*/
+    
     
 }
 - (void) touchesEnded:(NSSet *)touches
@@ -155,13 +205,26 @@
     pointX = pointScr.x;
     pointY = pointScr.y;
     
-    printf("end   x: %f  y: %f\n", pointX, pointY);
     
-    point[0] = 3;
-    point[1] = pointX;
-    point[2] = pointY;
     
-    [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+    NSLog(@"end   x: %f  y: %f\n", pointX, pointY);
+    if (doubleTapSqr == 3)
+    {
+        point[0] = 5;
+        point[1] = pointX;
+        point[2] = pointY;
+        [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+        doubleTapSqr = 0;
+        
+    }
+    else
+    {
+        point[0] = 3;
+        point[1] = pointX;
+        point[2] = pointY;
+        [_outputStream write:(unsigned char*)point maxLength:sizeof(double)*3];
+        
+    }
     
 }
 
@@ -271,7 +334,7 @@
             [_alertErr show];
             break;
         default:
-            NSLog(@"Unknown event");
+            NSLog(@" ");
     }
 }
 
